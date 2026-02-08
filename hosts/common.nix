@@ -330,6 +330,12 @@
 
     # Vim configuration
     sudo -u shina ln -sf /Users/shina/.dotfiles/configs/vimrc /Users/shina/.vimrc
+
+    # Claude Code configuration
+    sudo -u shina mkdir -p /Users/shina/.claude
+    sudo -u shina ln -sf /Users/shina/.dotfiles/configs/claude-settings.json /Users/shina/.claude/settings.json
+    sudo -u shina ln -sf /Users/shina/.dotfiles/configs/rotate-language.sh /Users/shina/.claude/rotate-language.sh
+    sudo -u shina chmod +x /Users/shina/.dotfiles/configs/rotate-language.sh
   '';
 
   # Used for backwards compatibility
