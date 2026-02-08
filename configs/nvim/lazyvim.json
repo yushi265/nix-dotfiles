@@ -7,8 +7,7 @@
     "lazyvim.plugins.extras.lang.php",
     "lazyvim.plugins.extras.lang.sql",
     "lazyvim.plugins.extras.lang.typescript",
-    "lazyvim.plugins.extras.lang.vue",
-    "lazyvim.plugins.extras.util.chezmoi"
+    "lazyvim.plugins.extras.lang.vue"
   ],
   "install_version": 7,
   "news": {

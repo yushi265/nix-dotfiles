@@ -1,0 +1,17 @@
+# Nix build results
+result
+result-*
+
+# direnv
+.direnv
+.envrc
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Logs
+*.log
