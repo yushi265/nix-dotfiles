@@ -320,6 +320,16 @@
     # Ghostty configuration
     sudo -u shina mkdir -p /Users/shina/.config/ghostty
     sudo -u shina ln -sf /Users/shina/.dotfiles/configs/ghostty-config /Users/shina/.config/ghostty/config
+
+    # Neovim configuration
+    sudo -u shina mkdir -p /Users/shina/.config
+    sudo -u shina ln -sfn /Users/shina/.dotfiles/configs/nvim /Users/shina/.config/nvim
+
+    # Yazi configuration
+    sudo -u shina ln -sfn /Users/shina/.dotfiles/configs/yazi /Users/shina/.config/yazi
+
+    # Vim configuration
+    sudo -u shina ln -sf /Users/shina/.dotfiles/configs/vimrc /Users/shina/.vimrc
   '';
 
   # Used for backwards compatibility

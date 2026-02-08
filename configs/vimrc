@@ -1,0 +1,33 @@
+" ========================================
+" vim-plug（プラグイン管理）
+" ========================================
+" 自動インストール
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin()
+Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+call plug#end()
+
+" ========================================
+" 基本設定
+" ========================================
+" シンタックスハイライト
+syntax enable
+
+" ファイルタイプ検出
+filetype plugin indent on
+
+" ========================================
+" カラースキーム
+" ========================================
+set termguicolors
+set background=dark
+silent! colorscheme catppuccin_mocha
+
+" 背景を黒に設定
+highlight Normal guibg=#000000 ctermbg=0
+highlight NonText guibg=#000000 ctermbg=0
