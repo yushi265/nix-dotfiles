@@ -64,6 +64,50 @@ darwin-rebuild --rollback
 ### GUIアプリ（Homebrew casks）
 - Ghostty
 
+## Zsh設定の管理
+
+### `programs.zsh`による宣言的管理
+
+**重要**: `.zshrc`ファイルは存在しません。全てのZsh設定は`hosts/common.nix`の`programs.zsh`セクションで宣言的に管理されています。
+
+```nix
+programs.zsh = {
+  enable = true;
+  promptInit = ''
+    # p10k instant prompt
+  '';
+  interactiveShellInit = ''
+    # プラグイン、エイリアス、関数など全ての設定
+  '';
+};
+```
+
+### 設定内容（hosts/common.nix:48-262）
+
+- **プラグイン**: p10k, fast-syntax-highlighting, autosuggestions, completions
+- **エイリアス**: ls→lsd, cat→bat, vim→nvim, git shortcuts等
+- **関数**: `repo()`, `gd()`, `rgf()` - FZF統合の便利関数
+- **FZF**: キーバインド、プレビュー、fd/bat統合
+- **Zoxide**: スマートcd (`z`コマンド)
+
+### マシンタイプ別設定
+
+`machineType`変数で条件分岐（254-261行目）:
+
+```nix
+'' + (if machineType == "personal" then ''
+  export PATH="$HOME/.bun/bin:$PATH"
+  alias coleta-next="/Users/shina/documents/coleta/coleta-next"
+  # ... personal専用のエイリアス
+'' else "");
+```
+
+### 設定変更の流れ
+
+1. `hosts/common.nix`の`programs.zsh.interactiveShellInit`を編集
+2. `sudo darwin-rebuild switch --flake ~/.dotfiles`で適用
+3. Nixが自動的に`/etc/zshrc`を生成・更新
+
 ## 依存関係
 
 - **Nix**: パッケージマネージャ（Determinate Systems installer推奨）
