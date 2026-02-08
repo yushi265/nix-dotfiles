@@ -1,0 +1,121 @@
+# ~/.config/ghostty/config
+
+# ========================================
+# Shift+Enter設定（環境によっては必要）
+# ========================================
+# 通常は不要ですが、Shift+Enterが効かない場合は以下を追加
+# keybind = shift+enter=text:\n
+
+# ========================================
+# フォント設定
+# ========================================
+
+# Nerd Fontを使用（アイコン表示に対応）
+font-family = "JetBrains Mono"
+font-family = "Osaka−等幅"
+font-size = 14
+font-feature = -dlig
+
+# ========================================
+# テーマ設定
+# ========================================
+
+# ダーク/ライトモードで自動切り替え
+theme = light:Catppuccin Latte,dark:Catppuccin Mocha
+background = 000
+
+# ========================================
+# ウィンドウ設定
+# ========================================
+
+# 起動時のウィンドウサイズ
+window-height = 40
+window-width = 160
+
+# パディング（読みやすさ向上）
+window-padding-x = 16
+window-padding-y = 16
+window-padding-balance = true
+
+# ウィンドウ状態を保存
+window-save-state = always
+
+# macOS: タイトルバースタイル
+macos-titlebar-style = tabs
+
+# 半透明にする
+background-opacity = 0.80
+
+# ========================================
+# パフォーマンス設定
+# ========================================
+
+# スクロールバック行数（大量出力に対応）
+scrollback-limit = 100000
+
+# マウス関連
+mouse-hide-while-typing = true
+mouse-scroll-multiplier = 2
+
+# ========================================
+# シェル統合
+# ========================================
+
+# シェル統合を有効化
+shell-integration = detect
+shell-integration-features = cursor,sudo,title
+
+# ========================================
+# 便利なキーバインド
+# ========================================
+
+# 設定リロード
+keybind = cmd+shift+comma=reload_config
+
+# スプリット表示
+unfocused-split-opacity = 0.4
+unfocused-split-fill = #313244
+
+# スプリット操作
+keybind = cmd+d=new_split:right
+keybind = cmd+shift+d=new_split:down
+keybind = cmd+w=close_surface
+
+# スプリット間移動（Vim風）
+keybind = ctrl+cmd+h=goto_split:left
+keybind = ctrl+cmd+j=goto_split:bottom
+keybind = ctrl+cmd+k=goto_split:top
+keybind = ctrl+cmd+l=goto_split:right
+
+# スプリットリサイズ（Vim風）
+keybind = ctrl+cmd+shift+h=resize_split:left,40
+keybind = ctrl+cmd+shift+j=resize_split:down,40
+keybind = ctrl+cmd+shift+k=resize_split:up,40
+keybind = ctrl+cmd+shift+l=resize_split:right,40
+keybind = ctrl+cmd+shift+enter=equalize_splits
+
+# プロンプト間ジャンプ（Claude Codeの出力を素早く確認）
+keybind = cmd+up=jump_to_prompt:-1
+keybind = cmd+down=jump_to_prompt:1
+
+# ========================================
+# クイックターミナル
+# ========================================
+
+# クイックターミナルの位置を画面上部に設定
+quick-terminal-position = "top"
+
+# クイックターミナルを表示するスクリーンを設定 (メインスクリーン)
+quick-terminal-screen = "main"
+
+# フォーカスを失うと自動的に隠す
+quick-terminal-autohide = true
+
+# サイズ
+quick-terminal-size = 60%
+
+# アニメーション時間を設定（0で即時表示）
+quick-terminal-animation-duration = 0
+
+# グローバルホットキーを設定
+keybind = "global:ctrl+cmd+,=toggle_quick_terminal"

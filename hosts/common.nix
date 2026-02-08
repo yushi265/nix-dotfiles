@@ -305,7 +305,7 @@
     stateVersion = 5;
   };
 
-  # Git configuration with delta
+  # User configuration files
   system.activationScripts.postActivation.text = ''
     # Configure git to use delta for diff/log (run as primary user with explicit HOME)
     sudo -u shina HOME=/Users/shina ${pkgs.git}/bin/git config --global core.pager "${pkgs.delta}/bin/delta"
@@ -316,6 +316,10 @@
     sudo -u shina HOME=/Users/shina ${pkgs.git}/bin/git config --global delta.syntax-theme "Monokai Extended"
     sudo -u shina HOME=/Users/shina ${pkgs.git}/bin/git config --global merge.conflictstyle diff3
     sudo -u shina HOME=/Users/shina ${pkgs.git}/bin/git config --global diff.colorMoved default
+
+    # Ghostty configuration
+    sudo -u shina mkdir -p /Users/shina/.config/ghostty
+    sudo -u shina ln -sf /Users/shina/.dotfiles/configs/ghostty-config /Users/shina/.config/ghostty/config
   '';
 
   # Used for backwards compatibility
