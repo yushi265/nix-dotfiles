@@ -34,13 +34,14 @@
       modules = [
         ./hosts/common.nix
 
-        home-manager.darwinModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.extraSpecialArgs = { inherit machineType; };
-          home-manager.users.shina = ./home/default.nix;
-        }
+        # home-manager integration (temporarily disabled for initial install)
+        # home-manager.darwinModules.home-manager
+        # {
+        #   home-manager.useGlobalPkgs = true;
+        #   home-manager.useUserPackages = true;
+        #   home-manager.extraSpecialArgs = { inherit machineType; };
+        #   home-manager.users.shina = ./home/default.nix;
+        # }
       ];
     };
   in {
