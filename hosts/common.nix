@@ -97,10 +97,24 @@
       # Load local env if exists
       [[ -f "$HOME/.local/bin/env" ]] && source "$HOME/.local/bin/env"
 
-      # Conditional aliases (bat)
-      if command -v ${pkgs.bat}/bin/bat &>/dev/null; then
-        alias cat="${pkgs.bat}/bin/bat"
-      fi
+      # Aliases
+      alias c="clear"
+      alias f="yazi"
+      alias dc="docker compose"
+      alias ls="lsd"
+      alias l="ls -l"
+      alias la="ls -a"
+      alias lal="ls -la"
+      alias lt="ls --tree"
+      alias ccusage="npx ccusage@latest"
+      alias gs="git status"
+      alias gw="git worktree"
+      alias gwl="git worktree list"
+      alias gl="git log"
+      alias glo="git log --oneline"
+      alias vim="nvim"
+      alias vi="nvim"
+      alias cat="${pkgs.bat}/bin/bat"
 
       # Custom functions
       # repo: git repository/worktree selector with fzf
@@ -240,38 +254,11 @@
     '' + (if machineType == "personal" then ''
       # Personal machine specific configuration
       export PATH="$HOME/.bun/bin:$PATH"
+      alias coleta-next="/Users/shina/documents/coleta/coleta-next"
+      alias coleta="/Users/shina/documents/coleta/coleta/coleta-server"
+      alias awsp='export AWS_PROFILE="coleta/tf"'
+      alias awsd='export AWS_PROFILE="coleta-dev/tf"'
     '' else "");
-
-    # Shell aliases
-    shellAliases = {
-      # Common aliases
-      c = "clear";
-      f = "yazi";
-      dc = "docker compose";
-      ls = "lsd";
-      l = "ls -l";
-      la = "ls -a";
-      lal = "ls -la";
-      lt = "ls --tree";
-      ccusage = "npx ccusage@latest";
-
-      # Git aliases
-      gs = "git status";
-      gw = "git worktree";
-      gwl = "git worktree list";
-      gl = "git log";
-      glo = "git log --oneline";
-
-      # Neovim
-      vim = "nvim";
-      vi = "nvim";
-    } // (if machineType == "personal" then {
-      # Personal machine aliases
-      coleta-next = "/Users/shina/documents/coleta/coleta-next";
-      coleta = "/Users/shina/documents/coleta/coleta/coleta-server";
-      awsp = "export AWS_PROFILE=\"coleta/tf\"";
-      awsd = "export AWS_PROFILE=\"coleta-dev/tf\"";
-    } else {});
   };
 
   # Homebrew integration for GUI apps
