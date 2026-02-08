@@ -39,7 +39,12 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = { inherit machineType; };
-          home-manager.users.shina = ./home/default.nix;
+          home-manager.users.shina = { pkgs, ... }: {
+            home.username = "shina";
+            home.homeDirectory = "/Users/shina";
+            home.stateVersion = "24.11";
+            programs.home-manager.enable = true;
+          };
         }
       ];
     };
