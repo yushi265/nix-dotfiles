@@ -5,9 +5,10 @@
   nix = {
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
-      # Optimize store on each build
-      auto-optimise-store = true;
     };
+
+    # Optimize store automatically
+    optimise.automatic = true;
 
     # Auto garbage collection
     gc = {
@@ -38,6 +39,9 @@
     ];
   };
 
+  # Primary user for system settings
+  system.primaryUser = "shina";
+
   # macOS system settings
   system = {
     defaults = {
@@ -62,9 +66,6 @@
 
     stateVersion = 5;
   };
-
-  # Auto upgrade nix package and the daemon service
-  services.nix-daemon.enable = true;
 
   # Used for backwards compatibility
   system.configurationRevision = null;
