@@ -224,7 +224,7 @@
           local initial_query="''${*:-}"
           local result file line
 
-          result=$(${pkgs.ripgrep}/bin/rg --color=always --line-number --no-heading '' 2>/dev/null | \
+          result=$(${pkgs.ripgrep}/bin/rg --color=always --line-number --no-heading . 2>/dev/null | \
               ${pkgs.fzf}/bin/fzf --ansi --disabled --query "$initial_query" \
                   --bind "change:reload:${pkgs.ripgrep}/bin/rg --color=always --line-number --no-heading {q} || true" \
                   --delimiter=: \
