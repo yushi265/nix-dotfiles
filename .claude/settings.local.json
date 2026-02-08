@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(nix flake update:*)",
+      "Bash(darwin-rebuild build:*)",
+      "Bash(sudo darwin-rebuild switch:*)",
+      "Bash(git config:*)"
+    ]
+  }
+}

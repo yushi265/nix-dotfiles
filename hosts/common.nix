@@ -277,6 +277,12 @@
     ];
   };
 
+  # User configuration
+  users.users.shina = {
+    name = "shina";
+    home = "/Users/shina";
+  };
+
   # Primary user for system settings
   system.primaryUser = "shina";
 
@@ -305,38 +311,7 @@
     stateVersion = 5;
   };
 
-  # User configuration files
-  system.activationScripts.postActivation.text = ''
-    # Configure git to use delta for diff/log (run as primary user with explicit HOME)
-    sudo -u shina HOME=/Users/shina ${pkgs.git}/bin/git config --global core.pager "${pkgs.delta}/bin/delta"
-    sudo -u shina HOME=/Users/shina ${pkgs.git}/bin/git config --global interactive.diffFilter "${pkgs.delta}/bin/delta --color-only"
-    sudo -u shina HOME=/Users/shina ${pkgs.git}/bin/git config --global delta.navigate true
-    sudo -u shina HOME=/Users/shina ${pkgs.git}/bin/git config --global delta.light false
-    sudo -u shina HOME=/Users/shina ${pkgs.git}/bin/git config --global delta.line-numbers true
-    sudo -u shina HOME=/Users/shina ${pkgs.git}/bin/git config --global delta.syntax-theme "Monokai Extended"
-    sudo -u shina HOME=/Users/shina ${pkgs.git}/bin/git config --global merge.conflictstyle diff3
-    sudo -u shina HOME=/Users/shina ${pkgs.git}/bin/git config --global diff.colorMoved default
-
-    # Ghostty configuration
-    sudo -u shina mkdir -p /Users/shina/.config/ghostty
-    sudo -u shina ln -sf /Users/shina/.dotfiles/configs/ghostty-config /Users/shina/.config/ghostty/config
-
-    # Neovim configuration
-    sudo -u shina mkdir -p /Users/shina/.config
-    sudo -u shina ln -sfn /Users/shina/.dotfiles/configs/nvim /Users/shina/.config/nvim
-
-    # Yazi configuration
-    sudo -u shina ln -sfn /Users/shina/.dotfiles/configs/yazi /Users/shina/.config/yazi
-
-    # Vim configuration
-    sudo -u shina ln -sf /Users/shina/.dotfiles/configs/vimrc /Users/shina/.vimrc
-
-    # Claude Code configuration
-    sudo -u shina mkdir -p /Users/shina/.claude
-    sudo -u shina ln -sf /Users/shina/.dotfiles/configs/claude-settings.json /Users/shina/.claude/settings.json
-    sudo -u shina ln -sf /Users/shina/.dotfiles/configs/rotate-language.sh /Users/shina/.claude/rotate-language.sh
-    sudo -u shina chmod +x /Users/shina/.dotfiles/configs/rotate-language.sh
-  '';
+  # Activation scripts are now managed by home-manager (see home.nix)
 
   # Used for backwards compatibility
   system.configurationRevision = null;

@@ -4,8 +4,11 @@ This file provides guidance to Claude Code when working with this Nix configurat
 
 ## Overview
 
-これは nix-darwin で管理された macOS dotfiles リポジトリです。
+これは nix-darwin + home-manager で管理された macOS dotfiles リポジトリです。
 chezmoi から Nix への移行が完了し、全ての設定が宣言的に管理されています。
+
+- **nix-darwin**: システムレベルの設定（パッケージ、Zsh、Homebrew、macOS設定）
+- **home-manager**: ユーザーレベルの設定（dotfiles、Git設定、アプリケーション設定）
 
 ## 主要なコマンド
 
@@ -30,6 +33,7 @@ darwin-rebuild --rollback
   flake.lock             # 依存関係のロック
   hosts/
     common.nix           # システム設定 + Zsh + パッケージ
+  home.nix               # home-manager ユーザー設定
   configs/
     p10k.zsh             # Powerlevel10k設定
     ghostty-config       # Ghostty設定
@@ -112,7 +116,44 @@ programs.zsh = {
 
 - **Nix**: パッケージマネージャ（Determinate Systems installer推奨）
 - **nix-darwin**: macOS システム設定管理
+- **home-manager**: ユーザー環境・dotfiles管理
 - **Homebrew**: GUI アプリケーション管理（nix-darwin統合）
+
+## home-manager による設定管理
+
+### ファイル構成
+
+`home.nix` でユーザー設定を宣言的に管理:
+
+```nix
+{
+  # Git設定（delta統合）
+  programs.git = {
+    enable = true;
+    extraConfig = { ... };
+  };
+
+  # XDG準拠の設定ファイル
+  xdg.configFile = {
+    "ghostty/config".source = ./configs/ghostty-config;
+    "nvim".source = ./configs/nvim;
+    "yazi".source = ./configs/yazi;
+  };
+
+  # ホームディレクトリ直下のファイル
+  home.file = {
+    ".vimrc".source = ./configs/vimrc;
+    ".claude/settings.json".source = ./configs/claude-settings.json;
+  };
+}
+```
+
+### 利点
+
+- **宣言的管理**: activationScripts 不要、設定ファイルの自動シンボリックリンク
+- **冪等性**: 何度実行しても同じ結果
+- **ロールバック**: 世代管理により過去の設定に戻せる
+- **クロスプラットフォーム**: NixOS/Linux でも同じ設定が使える
 
 ## 新しいマシンでの環境構築
 
@@ -155,6 +196,7 @@ nix-store --optimise
 
 ## 注意事項
 
-- activationScriptは全てrootとして実行されるため、ユーザー設定は `sudo -u shina HOME=/Users/shina` で実行
+- **home-manager** がユーザー設定を管理（Git、dotfiles等）
+- **nix-darwin** がシステム設定を管理（Zsh、パッケージ、macOS設定等）
 - lazyvim.jsonはLazyVimが書き込み可能な状態で管理（gitignore推奨）
 - Claude settings.jsonの`language`フィールドは動的に変更されます
