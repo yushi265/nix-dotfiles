@@ -308,14 +308,14 @@
   # Git configuration with delta
   system.activationScripts.postActivation.text = ''
     # Configure git to use delta for diff/log (run as primary user)
-    sudo -u ${config.system.primaryUser} ${pkgs.git}/bin/git config --global core.pager "${pkgs.delta}/bin/delta"
-    sudo -u ${config.system.primaryUser} ${pkgs.git}/bin/git config --global interactive.diffFilter "${pkgs.delta}/bin/delta --color-only"
-    sudo -u ${config.system.primaryUser} ${pkgs.git}/bin/git config --global delta.navigate true
-    sudo -u ${config.system.primaryUser} ${pkgs.git}/bin/git config --global delta.light false
-    sudo -u ${config.system.primaryUser} ${pkgs.git}/bin/git config --global delta.line-numbers true
-    sudo -u ${config.system.primaryUser} ${pkgs.git}/bin/git config --global delta.syntax-theme "Monokai Extended"
-    sudo -u ${config.system.primaryUser} ${pkgs.git}/bin/git config --global merge.conflictstyle diff3
-    sudo -u ${config.system.primaryUser} ${pkgs.git}/bin/git config --global diff.colorMoved default
+    sudo -u shina ${pkgs.git}/bin/git config --global core.pager "${pkgs.delta}/bin/delta"
+    sudo -u shina ${pkgs.git}/bin/git config --global interactive.diffFilter "${pkgs.delta}/bin/delta --color-only"
+    sudo -u shina ${pkgs.git}/bin/git config --global delta.navigate true
+    sudo -u shina ${pkgs.git}/bin/git config --global delta.light false
+    sudo -u shina ${pkgs.git}/bin/git config --global delta.line-numbers true
+    sudo -u shina ${pkgs.git}/bin/git config --global delta.syntax-theme "Monokai Extended"
+    sudo -u shina ${pkgs.git}/bin/git config --global merge.conflictstyle diff3
+    sudo -u shina ${pkgs.git}/bin/git config --global diff.colorMoved default
   '';
 
   # Used for backwards compatibility
