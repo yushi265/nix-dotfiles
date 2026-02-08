@@ -8,14 +8,9 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = { self, nixpkgs, nix-darwin, home-manager, ... }: let
+  outputs = { self, nixpkgs, nix-darwin, ... }: let
     # Helper function to create darwin system
     mkDarwinSystem = { hostname, system ? "aarch64-darwin" }: let
       # Derive machineType from hostname
@@ -33,19 +28,6 @@
 
       modules = [
         ./hosts/common.nix
-
-        home-manager.darwinModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.extraSpecialArgs = { inherit machineType; };
-          home-manager.users.shina = { pkgs, ... }: {
-            home.username = "shina";
-            home.homeDirectory = "/Users/shina";
-            home.stateVersion = "24.11";
-            programs.home-manager.enable = true;
-          };
-        }
       ];
     };
   in {
