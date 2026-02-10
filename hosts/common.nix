@@ -18,6 +18,9 @@
     };
   };
 
+  # Allow unfree packages (VSCode, etc.)
+  nixpkgs.config.allowUnfree = true;
+
   # macOS system packages
   environment.systemPackages = with pkgs; [
     # Editors
@@ -36,6 +39,8 @@
     git-open
     yazi
     delta
+    gh
+    lazygit
 
     # Zsh plugins
     zsh-powerlevel10k
@@ -266,7 +271,7 @@
     enable = true;
 
     onActivation = {
-      cleanup = "zap";
+      cleanup = "none";
       autoUpdate = true;
       upgrade = true;
     };
@@ -274,6 +279,15 @@
     # GUI applications
     casks = [
       "ghostty"
+      "docker-desktop"
+      "google-chrome"
+      "zed"
+      "slack"
+      "visual-studio-code"
+      "obsidian"
+      "alt-tab"
+      "raycast"
+      "scroll-reverser"
     ];
   };
 
