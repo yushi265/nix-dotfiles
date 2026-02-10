@@ -1,12 +1,13 @@
 # 🏗️ Nixベース macOS設定
 
-**nix-darwin**を使用した宣言的macOSシステム設定。システム設定からdotfilesまで全てを管理します。
+**nix-darwin + home-manager**を使用した宣言的macOSシステム設定。システム設定からdotfilesまで全てを管理します。
 
 ## ✨ 特徴
 
 - 🔧 **完全宣言的**: 全ての設定がNixで定義されています
 - 🔄 **再現可能**: どのMacでもクローンして再構築可能
 - 📦 **統合パッケージ管理**: CLIツールはnixpkgs、GUIアプリはHomebrew経由
+- 🏠 **home-manager統合**: ユーザー設定とdotfilesを宣言的に管理
 - 🎨 **美しいシェル**: Powerlevel10k、fzf、zoxideなどを備えたZsh
 - 🌈 **開発者フレンドリー**: Neovim (LazyVim)、Git (delta)、Ghosttyを事前設定
 - 🔀 **マルチマシン対応**: 個人用/会社用設定を自動検出で切り替え
@@ -86,6 +87,7 @@ sudo darwin-rebuild switch --flake ~/.dotfiles
 ├── flake.lock                # 依存関係ロックファイル
 ├── hosts/
 │   └── common.nix            # システム設定、パッケージ、Zsh
+├── home.nix                  # home-manager ユーザー設定
 ├── configs/
 │   ├── p10k.zsh              # Powerlevel10kテーマ
 │   ├── ghostty-config        # Ghosttyターミナル設定
@@ -195,16 +197,51 @@ sudo darwin-rebuild --rollback
 sudo launchctl kickstart -k system/org.nixos.nix-daemon
 ```
 
+## 🏗️ アーキテクチャ
+
+### nix-darwin vs home-manager
+
+- **nix-darwin** (`hosts/common.nix`): システムレベルの設定
+  - パッケージのインストール
+  - Zsh設定
+  - macOSシステム設定（Dock、Finder等）
+  - Homebrewアプリケーション
+
+- **home-manager** (`home.nix`): ユーザーレベルの設定
+  - Git設定（delta統合）
+  - dotfilesのシンボリックリンク管理
+  - アプリケーション固有設定
+
+### 設定ファイルの管理
+
+home-managerが全てのdotfilesを自動的にシンボリックリンクで管理します:
+
+```nix
+# home.nix の例
+xdg.configFile = {
+  "ghostty/config".source = ./configs/ghostty-config;
+  "nvim".source = ./configs/nvim;
+};
+
+home.file = {
+  ".vimrc".source = ./configs/vimrc;
+};
+```
+
+既存のファイルは `.backup` 拡張子で自動バックアップされます。
+
 ## 📚 リソース
 
 - [Nix Manual](https://nixos.org/manual/nix/stable/)
 - [nix-darwin](https://github.com/LnL7/nix-darwin)
+- [home-manager](https://github.com/nix-community/home-manager)
 - [Nixpkgs Search](https://search.nixos.org/packages)
 - [Nix Language Basics](https://nixos.org/manual/nix/stable/language/)
 
 ## 🙏 謝辞
 
 - [nix-darwin](https://github.com/LnL7/nix-darwin) - NixによるmacOS設定
+- [home-manager](https://github.com/nix-community/home-manager) - ユーザー環境管理
 - [LazyVim](https://www.lazyvim.org/) - Neovim設定
 - [Catppuccin](https://github.com/catppuccin) - 優しいパステルテーマ
 - [Powerlevel10k](https://github.com/romkatv/powerlevel10k) - Zshテーマ
