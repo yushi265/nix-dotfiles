@@ -64,7 +64,7 @@
       [[ ! -f ~/.dotfiles/configs/p10k.zsh ]] || source ~/.dotfiles/configs/p10k.zsh
 
       # Load plugins
-      source ${pkgs.zsh-fast-syntax-highlighting}/share/zsh/site-functions/fast-syntax-highlighting.plugin.zsh
+      source ${pkgs.zsh-fast-syntax-highlighting}/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
       source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
       fpath=(${pkgs.zsh-completions}/share/zsh/site-functions $fpath)
 
@@ -141,7 +141,7 @@
               }' | \
               sort -t$'\t' -k1,1 -k2,2 -k3,3n -k5 | \
               cut -f4- | \
-              ${pkgs.fzf}/bin/fzf --ansi --height 40% --reverse --delimiter=$'\t' --with-nth=2 --preview 'ls -la {1}' | \
+              ${pkgs.fzf}/bin/fzf --ansi --height 40% --reverse --delimiter=$'\t' --with-nth=2 --preview 'ls -la {1}' --query "$1" | \
               cut -f1)
 
           if [[ -n "$selected" ]]; then
