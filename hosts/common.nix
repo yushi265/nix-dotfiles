@@ -282,7 +282,6 @@
       "docker-desktop"
       "ghostty"
       "google-chrome"
-      "google-japanese-ime"
       "karabiner-elements"
       "obsidian"
       "raycast"

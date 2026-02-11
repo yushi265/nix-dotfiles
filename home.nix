@@ -107,8 +107,7 @@
     # Ghostty
     "ghostty/config".source = ./configs/ghostty-config;
 
-    # Neovim (LazyVim)
-    "nvim".source = ./configs/nvim;
+    # Neovim (LazyVim) - managed by activation script for writable lazy-lock.json
 
     # Yazi file manager
     "yazi".source = ./configs/yazi;
@@ -307,6 +306,20 @@
       };
     };
   };
+
+  # Activation script to copy nvim config with writable lazy-lock.json
+  home.activation.nvimConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    NVIM_DIR="$HOME/.config/nvim"
+    NVIM_SOURCE="${./configs/nvim}"
+
+    # nvimディレクトリがシンボリックリンクまたは存在しない場合、実ディレクトリとしてコピー
+    if [ -L "$NVIM_DIR" ] || [ ! -d "$NVIM_DIR" ]; then
+      $DRY_RUN_CMD rm -rf "$NVIM_DIR"
+      $DRY_RUN_CMD cp -r "$NVIM_SOURCE" "$NVIM_DIR"
+      # lazy-lock.jsonを書き込み可能に
+      $DRY_RUN_CMD chmod -R u+w "$NVIM_DIR"
+    fi
+  '';
 
   # Let Home Manager install and manage itself
   programs.home-manager.enable = true;
