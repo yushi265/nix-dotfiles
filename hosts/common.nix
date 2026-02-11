@@ -26,6 +26,8 @@
     # Editors
     vim
     neovim
+    vscode
+    zed-editor
 
     # CLI tools
     lsd
@@ -42,6 +44,13 @@
     gh
     lazygit
     claude-code-bin
+
+    # GUI Applications
+    alt-tab-macos
+    ghostty-bin
+    obsidian
+    raycast
+    slack
 
     # Zsh plugins
     zsh-powerlevel10k
@@ -277,18 +286,12 @@
       upgrade = true;
     };
 
-    # GUI applications
+    # GUI applications (macOS-specific tools only)
+    # Most GUI apps are now managed via nixpkgs in environment.systemPackages
     casks = [
-      "alt-tab"
-      "docker-desktop"
-      "ghostty"
-      "google-chrome"
-      "obsidian"
-      "raycast"
-      "scroll-reverser"
-      "slack"
-      "visual-studio-code"
-      "zed"
+      "docker-desktop"     # macOS-specific Docker GUI
+      "google-chrome"      # Kept in Homebrew for latest updates
+      "scroll-reverser"    # macOS-specific system tool
     ];
   };
 
