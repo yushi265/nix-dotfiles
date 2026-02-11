@@ -16,6 +16,9 @@
     vscode
     zed-editor
 
+    # GUI Applications
+    _1password-gui
+
     # CLI tools
     lsd
     ripgrep
@@ -275,6 +278,7 @@
     # Most GUI apps are now managed via nixpkgs in environment.systemPackages
     casks = [
       "alt-tab"
+      "aqua-voice"
       "docker-desktop"
       "ghostty"
       "google-chrome"
