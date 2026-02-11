@@ -41,6 +41,7 @@
     delta
     gh
     lazygit
+    claude-code-bin
 
     # Zsh plugins
     zsh-powerlevel10k
@@ -278,16 +279,16 @@
 
     # GUI applications
     casks = [
-      "ghostty"
-      "docker-desktop"
-      "google-chrome"
-      "zed"
-      "slack"
-      "visual-studio-code"
-      "obsidian"
       "alt-tab"
+      "docker-desktop"
+      "ghostty"
+      "google-chrome"
+      "obsidian"
       "raycast"
       "scroll-reverser"
+      "slack"
+      "visual-studio-code"
+      "zed"
     ];
   };
 

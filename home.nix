@@ -50,7 +50,10 @@
     ".vimrc".source = ./configs/vimrc;
 
     # Claude Code configuration
-    ".claude/settings.json".source = ./configs/claude-settings.json;
+    ".claude/settings.json" = {
+      source = ./configs/claude-settings.json;
+      force = true;  # Allow overwriting since language field changes dynamically
+    };
     ".claude/rotate-language.sh" = {
       source = ./configs/rotate-language.sh;
       executable = true;
