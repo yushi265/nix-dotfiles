@@ -22,10 +22,6 @@
 ### 1. Nixのインストール
 
 ```bash
-# 公式インストーラーを使用
-sh <(curl -L https://nixos.org/nix/install)
-
-# または Determinate Systemsインストーラーを使用 (推奨)
 curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 ```
 
@@ -40,10 +36,14 @@ cd ~/.dotfiles
 
 ```bash
 # 初回セットアップ (nix-darwinをインストール)
-nix run nix-darwin -- switch --flake .
+nix run nix-darwin -- switch --flake .#personal
+# または
+nix run nix-darwin -- switch --flake .#personal-old
 
 # 以降の更新
-sudo darwin-rebuild switch --flake ~/.dotfiles
+sudo darwin-rebuild switch --flake ~/.dotfiles#personal
+# または
+sudo darwin-rebuild switch --flake ~/.dotfiles#personal-old
 ```
 
 ### 4. ターミナルを再起動

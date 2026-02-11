@@ -8,7 +8,8 @@
       "Bash(brew search:*)",
       "Bash(nix search:*)",
       "Bash(ls:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(nix flake check:*)"
     ]
   }
 }

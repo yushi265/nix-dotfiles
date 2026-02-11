@@ -1,4 +1,4 @@
-{ pkgs, lib, machineType, username, ... }:
+{ pkgs, lib, machineType, username, configName, ... }:
 
 {
   # Nix settings
@@ -253,6 +253,11 @@
               line=$(echo "$result" | cut -d: -f2)
               ${pkgs.neovim}/bin/nvim "+$line" "$file"
           fi
+      }
+
+      # Nix darwin-rebuild switch
+      rebuild() {
+        sudo darwin-rebuild switch --flake ~/.dotfiles#${configName} "$@"
       }
     '' + (if machineType == "personal" then ''
       # Personal machine specific configuration

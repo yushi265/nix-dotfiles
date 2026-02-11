@@ -17,7 +17,7 @@
 
   outputs = { self, nixpkgs, nix-darwin, home-manager, ... }: let
     # Helper function to create darwin system
-    mkDarwinSystem = { hostname, username, system ? "aarch64-darwin" }: let
+    mkDarwinSystem = { configName, hostname, username, system ? "aarch64-darwin" }: let
       # Derive machineType from hostname
       # "MacBook-Pro" or "MacBook-Pro.local" -> "personal"
       # anything else -> "work"
@@ -28,7 +28,7 @@
       inherit system;
 
       specialArgs = {
-        inherit machineType username;
+        inherit machineType username configName;
       };
 
       modules = [
@@ -46,24 +46,20 @@
   in {
     # System configuration
     darwinConfigurations = {
-      "MacBook-Pro" = mkDarwinSystem {
-        hostname = "MacBook-Pro";
-        username = "shina";
-      };
-
-      "MacBook-Pro---old" = mkDarwinSystem {
-        hostname = "MacBook-Pro---old";
-        username = "shina";
-      };
-
-      # Private machine configuration
-      "private" = mkDarwinSystem {
+      "personal" = mkDarwinSystem {
+        configName = "personal";
         hostname = "MacBook-Pro";
         username = "shiina";
+      };
+
+      "personal-old" = mkDarwinSystem {
+        configName = "personal-old";
+        hostname = "MacBook-Pro---old";
+        username = "shina";
       };
     };
 
     # For nix-darwin commands
-    darwinPackages = self.darwinConfigurations."MacBook-Pro".pkgs;
+    darwinPackages = self.darwinConfigurations."personal".pkgs;
   };
 }
