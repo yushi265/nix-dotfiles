@@ -2,21 +2,8 @@
 
 {
   # Nix settings
-  nix = {
-    settings = {
-      experimental-features = [ "nix-command" "flakes" ];
-    };
-
-    # Optimize store automatically
-    optimise.automatic = true;
-
-    # Auto garbage collection
-    gc = {
-      automatic = true;
-      interval = { Weekday = 7; };
-      options = "--delete-older-than 30d";
-    };
-  };
+  # Using Determinate Systems installer, so let it manage Nix
+  nix.enable = false;
 
   # Allow unfree packages (VSCode, etc.)
   nixpkgs.config.allowUnfree = true;
