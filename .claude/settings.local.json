@@ -5,7 +5,9 @@
       "Bash(darwin-rebuild build:*)",
       "Bash(sudo darwin-rebuild switch:*)",
       "Bash(git config:*)",
-      "Bash(brew search:*)"
+      "Bash(brew search:*)",
+      "Bash(nix search:*)",
+      "Bash(ls:*)"
     ]
   }
 }

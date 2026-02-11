@@ -1,4 +1,4 @@
-{ pkgs, machineType, ... }:
+{ pkgs, machineType, username, ... }:
 
 {
   # Nix settings
@@ -269,8 +269,8 @@
     '' + (if machineType == "personal" then ''
       # Personal machine specific configuration
       export PATH="$HOME/.bun/bin:$PATH"
-      alias coleta-next="/Users/shina/documents/coleta/coleta-next"
-      alias coleta="/Users/shina/documents/coleta/coleta/coleta-server"
+      alias coleta-next="/Users/${username}/documents/coleta/coleta-next"
+      alias coleta="/Users/${username}/documents/coleta/coleta/coleta-server"
       alias awsp='export AWS_PROFILE="coleta/tf"'
       alias awsd='export AWS_PROFILE="coleta-dev/tf"'
     '' else "");
@@ -296,13 +296,13 @@
   };
 
   # User configuration
-  users.users.shina = {
-    name = "shina";
-    home = "/Users/shina";
+  users.users.${username} = {
+    name = username;
+    home = "/Users/${username}";
   };
 
   # Primary user for system settings
-  system.primaryUser = "shina";
+  system.primaryUser = username;
 
   # macOS system settings
   system = {
