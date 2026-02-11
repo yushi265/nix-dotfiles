@@ -32,13 +32,6 @@
     lazygit
     claude-code-bin
 
-    # GUI Applications
-    alt-tab-macos
-    ghostty-bin
-    obsidian
-    raycast
-    slack
-
     # Zsh plugins
     zsh-powerlevel10k
     zsh-fast-syntax-highlighting
@@ -276,9 +269,14 @@
     # GUI applications (macOS-specific tools only)
     # Most GUI apps are now managed via nixpkgs in environment.systemPackages
     casks = [
-      "docker-desktop"     # macOS-specific Docker GUI
-      "google-chrome"      # Kept in Homebrew for latest updates
-      "scroll-reverser"    # macOS-specific system tool
+      "alt-tab"
+      "docker-desktop"
+      "ghostty"
+      "google-chrome"
+      "obsidian"
+      "raycast"
+      "scroll-reverser"
+      "slack"
     ];
   };
 
