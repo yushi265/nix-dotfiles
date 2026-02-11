@@ -4,7 +4,8 @@
       "Bash(nix flake update:*)",
       "Bash(darwin-rebuild build:*)",
       "Bash(sudo darwin-rebuild switch:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(brew search:*)"
     ]
   }
 }
