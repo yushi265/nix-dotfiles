@@ -1,0 +1,44 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "terminal": {
+    "env": {
+      "FIG_NEW_SESSION": "\"1\""
+    }
+  },
+  "base_keymap": "JetBrains",
+  "multi_cursor_modifier": "cmd_or_ctrl",
+  "minimap": {
+    "thumb": "always"
+  },
+  "current_line_highlight": "all",
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 1000
+    }
+  },
+  "file_types": {
+    "json": [
+      ".*lintrc"
+    ]
+  },
+  "auto_indent_on_paste": true,
+  "use_on_type_format": true,
+  "show_whitespaces": "all",
+  "ensure_final_newline_on_save": true,
+  "soft_wrap": "editor_width",
+  "tab_size": 4,
+  "ui_font_size": 16,
+  "buffer_font_size": 15,
+  "theme": {
+    "mode": "system",
+    "light": "Ayu Light",
+    "dark": "Catppuccin Mocha - No Italics",
+  },
+}

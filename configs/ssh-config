@@ -1,0 +1,29 @@
+Host github.yushi265
+  User git
+  Port 22
+  HostName github.com
+  IdentityFile ~/.ssh/id_rsa
+  TCPKeepAlive yes
+  IdentitiesOnly yes
+
+Host github.yuki-shiina
+  User git
+  Port 22
+  HostName github.com
+  IdentityFile ~/.ssh/github_company
+  TCPKeepAlive yes
+  IdentitiesOnly yes
+Host github.com
+	StrictHostKeyChecking no
+
+Host twitter
+  User ec2-user
+  Port 22
+  HostName 35.76.171.96
+  IdentityFile ~/.ssh/explore-twitter.pem
+  TCPKeepAlive yes
+  IdentitiesOnly yes
+
+# Fig ssh integration. Keep at the bottom of this file.
+Match all
+  Include ~/.fig/ssh

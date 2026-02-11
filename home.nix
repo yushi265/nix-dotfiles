@@ -10,6 +10,11 @@
   programs.git = {
     enable = true;
 
+    ignores = [
+      "*~"
+      ".DS_Store"
+    ];
+
     settings = {
       core = {
         pager = "delta";
@@ -107,6 +112,12 @@
 
     # Yazi file manager
     "yazi".source = ./configs/yazi;
+
+    # Karabiner-Elements (keyboard customization)
+    "karabiner/karabiner.json".source = ./configs/karabiner.json;
+
+    # Zed editor
+    "zed/settings.json".source = ./configs/zed-settings.json;
   };
 
   # Home directory files
@@ -123,6 +134,15 @@
       source = ./configs/rotate-language.sh;
       executable = true;
     };
+
+    # SSH configuration (excluding private keys)
+    ".ssh/config".source = ./configs/ssh-config;
+
+    # tmux configuration
+    ".tmux.conf".source = ./configs/tmux.conf;
+
+    # npm configuration
+    ".npmrc".source = ./configs/npmrc;
   };
 
   # VSCode configuration

@@ -278,6 +278,7 @@
       "docker-desktop"
       "ghostty"
       "google-chrome"
+      "karabiner-elements"
       "obsidian"
       "raycast"
       "scroll-reverser"
