@@ -266,7 +266,6 @@
       }
     '' + (if machineType == "personal" then ''
       # Personal machine specific configuration
-      export PATH="$HOME/.bun/bin:$PATH"
       alias coleta-next="/Users/${username}/documents/coleta/coleta-next"
       alias coleta="/Users/${username}/documents/coleta/coleta/coleta-server"
       alias awsp='export AWS_PROFILE="coleta/tf"'
