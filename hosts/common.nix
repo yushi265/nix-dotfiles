@@ -33,6 +33,7 @@
     delta
     gh
     lazygit
+    nodejs
     pnpm
     claude-code-bin
 
