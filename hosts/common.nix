@@ -33,7 +33,7 @@
     delta
     gh
     lazygit
-    nodejs
+    mise
     pnpm
     claude-code-bin
 
@@ -98,6 +98,9 @@
 
       # Zoxide initialization
       eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
+
+      # mise initialization
+      eval "$(${pkgs.mise}/bin/mise activate zsh)"
 
       # Load local env if exists
       [[ -f "$HOME/.local/bin/env" ]] && source "$HOME/.local/bin/env"
