@@ -102,6 +102,13 @@
     # credentials は管理しない (secrets が Nix store に入るため)
   };
 
+  # mise global tool configuration
+  xdg.configFile."mise/config.toml".text = ''
+    [tools]
+    node = "lts"
+    bun = "latest"
+  '';
+
   # Configuration files
   xdg.configFile = {
     # Ghostty
@@ -306,6 +313,11 @@
       };
     };
   };
+
+  # Activation script to install mise tools globally
+  home.activation.miseInstall = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    ${pkgs.mise}/bin/mise install --quiet
+  '';
 
   # Activation script to copy nvim config with writable lazy-lock.json
   home.activation.nvimConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
