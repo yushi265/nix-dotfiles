@@ -33,6 +33,7 @@
     delta
     gh
     lazygit
+    pnpm
     claude-code-bin
 
     # Zsh plugins
