@@ -34,6 +34,9 @@
       diff = {
         colorMoved = "default";
       };
+      ghq = {
+        root = "~/src";
+      };
     };
   };
 

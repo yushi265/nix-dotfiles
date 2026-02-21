@@ -125,23 +125,32 @@
       alias cat="${pkgs.bat}/bin/bat"
 
       # Custom functions
-      # repo: git repository/worktree selector with fzf
+      # repo: ghq repository/worktree selector with fzf
       repo() {
-          local selected current_git_common
+          local selected current_git_common ghq_root
           current_git_common=$(git rev-parse --git-common-dir 2>/dev/null | xargs -I{} realpath {} 2>/dev/null)
+          ghq_root=$(ghq root)
 
-          selected=$(${pkgs.fd}/bin/fd --type f --type d --hidden --no-ignore \
-              '^\.git$' ~/Documents --max-depth 5 2>/dev/null | \
-              while read -r gitpath; do
-                  dir=$(dirname "$gitpath")
-                  name=$(basename "$dir")
-                  if [[ -d "$gitpath" ]]; then
-                      git_common=$(realpath "$gitpath" 2>/dev/null)
-                      printf '%s\t0\t%s\t\033[32m%s\033[0m\n' "$git_common" "$dir" "$name"
-                  else
-                      git_common=$(git -C "$dir" rev-parse --git-common-dir 2>/dev/null | xargs -I{} realpath {} 2>/dev/null)
-                      printf '%s\t1\t%s\t\033[33m↳ %s\033[0m\n' "$git_common" "$dir" "$name"
-                  fi
+          selected=$(ghq list --full-path 2>/dev/null | \
+              while read -r repo_path; do
+                  local git_common is_first wt_path wt_name rel_path
+                  git_common=$(realpath "$repo_path/.git" 2>/dev/null)
+                  rel_path=$(echo "$repo_path" | sed "s|^$ghq_root/||")
+                  is_first=true
+                  while IFS= read -r line; do
+                      case "$line" in
+                          worktree\ *)
+                              wt_path=$(echo "$line" | sed 's/^worktree //')
+                              wt_name=$(basename "$wt_path")
+                              if $is_first; then
+                                  printf '%s\t0\t%s\t\033[32m%s\033[0m\n' "$git_common" "$wt_path" "$rel_path"
+                                  is_first=false
+                              else
+                                  printf '%s\t1\t%s\t\033[33m↳ %s\033[0m\n' "$git_common" "$wt_path" "$wt_name"
+                              fi
+                              ;;
+                      esac
+                  done < <(git -C "$repo_path" worktree list --porcelain 2>/dev/null)
               done | \
               awk -F'\t' -v cur="$current_git_common" '{
                   if ($1 == cur) print "0\t" $0
