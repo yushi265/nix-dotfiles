@@ -139,10 +139,7 @@
       source = ./configs/claude-settings.json;
       force = true;  # Allow overwriting since language field changes dynamically
     };
-    ".claude/rotate-language.sh" = {
-      source = ./configs/rotate-language.sh;
-      executable = true;
-    };
+    ".claude/CLAUDE.md".source = ./configs/claude-claude-md.md;
 
     # SSH configuration (excluding private keys)
     ".ssh/config".source = ./configs/ssh-config;
