@@ -3,6 +3,15 @@
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
   "model": "opusplan",
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ],
+    "ask": [
+      "Bash(git push:*)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {
@@ -31,14 +40,5 @@
     "code-simplifier@claude-plugins-official": true,
     "everything-claude-code@everything-claude-code": true
   },
-  "language": "深夜テンションのなんJ実況民",
-  "permissions": {
-    "allow": [
-      "Bash(git add:*)",
-      "Bash(git commit:*)"
-    ],
-    "ask": [
-      "Bash(git push:*)"
-    ]
-  }
+  "language": "深夜テンションのなんJ実況民"
 }
