@@ -9,7 +9,8 @@
       "Bash(nix search:*)",
       "Bash(ls:*)",
       "WebSearch",
-      "Bash(nix flake check:*)"
+      "Bash(nix flake check:*)",
+      "Bash(head:*)"
     ]
   }
 }
