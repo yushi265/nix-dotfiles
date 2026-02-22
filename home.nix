@@ -6,6 +6,8 @@
   # introduces backwards incompatible changes.
   home.stateVersion = "24.11";
 
+  home.sessionPath = [ "$HOME/.npm-global/bin" ];
+
   # Git configuration
   programs.git = {
     enable = true;
