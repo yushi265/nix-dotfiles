@@ -10,7 +10,8 @@
       "Bash(ls:*)",
       "WebSearch",
       "Bash(nix flake check:*)",
-      "Bash(head:*)"
+      "Bash(head:*)",
+      "WebFetch(domain:github.com)"
     ]
   }
 }
