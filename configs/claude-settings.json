@@ -2,11 +2,34 @@
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/skills/task-log/scripts/generate_log.py --auto 2>/dev/null || true"
+          }
+        ],
+        "description": "Auto-log previous sessions on session start"
+      }
+    ]
+  },
   "model": "opusplan",
   "permissions": {
     "allow": [
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git branch *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git stash *)",
+      "Bash(git rev-parse *)",
+      "Bash(git symbolic-ref *)",
+      "Bash(gh repo view *)",
+      "Bash(gh pr list *)"
     ],
     "ask": [
       "Bash(git push:*)"
