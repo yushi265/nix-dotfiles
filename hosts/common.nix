@@ -33,6 +33,7 @@
     delta
     gh
     lazygit
+    zellij
     mise
     pnpm
     claude-code-bin
@@ -303,6 +304,7 @@
       "karabiner-elements"
       "obsidian"
       "raycast"
+      "cmux"
       "scroll-reverser"
       "slack"
     ];
