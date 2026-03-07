@@ -21,7 +21,7 @@ font-feature = -dlig
 # ========================================
 
 # ダーク/ライトモードで自動切り替え
-theme = light:Catppuccin Latte,dark:Catppuccin Mocha
+theme = Moonfly
 background = 000
 
 # ========================================
@@ -45,7 +45,7 @@ macos-titlebar-style = tabs
 
 # 半透明にする
 background-opacity = 0.80
-background-blur = 0.85
+background-blur-radius = 15
 
 # ========================================
 # パフォーマンス設定
