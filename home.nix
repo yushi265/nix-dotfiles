@@ -335,6 +335,73 @@
     fi
   '';
 
+  # Activation script to share Claude skills with Codex without replacing Codex built-ins
+  home.activation.codexClaudeSkills = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    CODEX_SKILLS_DIR="$HOME/.codex/skills"
+    CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
+
+    if [ ! -d "$CLAUDE_SKILLS_DIR" ]; then
+      exit 0
+    fi
+
+    $DRY_RUN_CMD mkdir -p "$CODEX_SKILLS_DIR"
+
+    # Keep Codex built-in .system intact; do not replace the entire skills directory.
+    for codex_entry in "$CODEX_SKILLS_DIR"/*; do
+      if [ ! -e "$codex_entry" ] && [ ! -L "$codex_entry" ]; then
+        continue
+      fi
+
+      skill_name="$(basename "$codex_entry")"
+      if [ "$skill_name" = ".system" ] || [ ! -L "$codex_entry" ]; then
+        continue
+      fi
+
+      target="$(readlink "$codex_entry")"
+      case "$target" in
+        "$CLAUDE_SKILLS_DIR"/*)
+          if [ ! -f "$target/SKILL.md" ]; then
+            $DRY_RUN_CMD rm -f "$codex_entry"
+          fi
+          ;;
+      esac
+    done
+
+    for claude_skill in "$CLAUDE_SKILLS_DIR"/*; do
+      if [ ! -d "$claude_skill" ] || [ ! -f "$claude_skill/SKILL.md" ]; then
+        continue
+      fi
+
+      skill_name="$(basename "$claude_skill")"
+      codex_link="$CODEX_SKILLS_DIR/$skill_name"
+
+      if [ -L "$codex_link" ]; then
+        target="$(readlink "$codex_link")"
+        if [ "$target" = "$claude_skill" ]; then
+          continue
+        fi
+      fi
+
+      if [ -e "$codex_link" ] || [ -L "$codex_link" ]; then
+        if [ -L "$codex_link" ]; then
+          target="$(readlink "$codex_link")"
+          case "$target" in
+            "$CLAUDE_SKILLS_DIR"/*)
+              $DRY_RUN_CMD rm -f "$codex_link"
+              ;;
+            *)
+              continue
+              ;;
+          esac
+        else
+          continue
+        fi
+      fi
+
+      $DRY_RUN_CMD ln -sfn "$claude_skill" "$codex_link"
+    done
+  '';
+
   # Let Home Manager install and manage itself
   programs.home-manager.enable = true;
 }
