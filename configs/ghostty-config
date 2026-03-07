@@ -45,6 +45,7 @@ macos-titlebar-style = tabs
 
 # 半透明にする
 background-opacity = 0.80
+background-blur = 0.85
 
 # ========================================
 # パフォーマンス設定
