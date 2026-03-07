@@ -298,6 +298,7 @@
     casks = [
       "alt-tab"
       "aqua-voice"
+      "codex"
       "docker-desktop"
       "ghostty"
       "google-chrome"
