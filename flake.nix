@@ -22,6 +22,7 @@
       # "MacBook-Pro" or "MacBook-Pro.local" -> "personal"
       # anything else -> "work"
       machineType = if nixpkgs.lib.hasInfix "MacBook-Pro" hostname
+                       || hostname == "mbp-m1"
                     then "personal"
                     else "work";
     in nix-darwin.lib.darwinSystem {
@@ -52,14 +53,14 @@
         username = "shiina";
       };
 
-      "personal-old" = mkDarwinSystem {
-        configName = "personal-old";
-        hostname = "MacBook-Pro---old";
+      "mbp-m1" = mkDarwinSystem {
+        configName = "personal";
+        hostname = "mbp-m1";
         username = "shina";
       };
     };
 
     # For nix-darwin commands
-    darwinPackages = self.darwinConfigurations."personal".pkgs;
+    darwinPackages = self.darwinConfigurations."mbp-m1".pkgs;
   };
 }
