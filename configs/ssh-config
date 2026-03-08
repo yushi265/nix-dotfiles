@@ -24,6 +24,14 @@ Host twitter
   TCPKeepAlive yes
   IdentitiesOnly yes
 
+# personal
+Host mbp-m1
+  User shina
+  HostName mbp-m1
+  IdentityFile ~/.ssh/id_ed25519
+  TCPKeepAlive yes
+  IdentitiesOnly yes
+
 # Fig ssh integration. Keep at the bottom of this file.
 Match all
   Include ~/.fig/ssh
