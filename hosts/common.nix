@@ -116,6 +116,7 @@
       alias lal="ls -la"
       alias lt="ls --tree"
       alias ccusage="npx ccusage@latest"
+      alias ssh="TERM=xterm-256color ssh"
       alias gs="git status"
       alias gw="git worktree"
       alias gwl="git worktree list"
@@ -308,6 +309,7 @@
       "cmux"
       "scroll-reverser"
       "slack"
+      "tailscale"
     ];
   };
 
