@@ -129,6 +129,9 @@
 
     # Zed editor
     "zed/settings.json".source = ./configs/zed-settings.json;
+
+    # Zellij terminal multiplexer
+    "zellij".source = ./configs/zellij;
   };
 
   # Home directory files

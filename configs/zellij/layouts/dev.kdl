@@ -1,0 +1,12 @@
+layout {
+    pane size=1 borderless=true {
+        plugin location="tab-bar"
+    }
+    pane split_direction="vertical" {
+        pane name="editor" focus=true size="70%"
+        pane name="terminal" size="30%"
+    }
+    pane size=2 borderless=true {
+        plugin location="status-bar"
+    }
+}
