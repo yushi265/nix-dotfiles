@@ -17,5 +17,9 @@
       "Read(//Users/shiina/.dotfiles/**)",
       "Bash(done)"
     ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
   }
 }
