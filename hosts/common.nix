@@ -72,9 +72,10 @@
       # Load p10k configuration
       [[ ! -f ~/.dotfiles/configs/p10k.zsh ]] || source ~/.dotfiles/configs/p10k.zsh
 
-      # SSH接続時に背景色を暗い青系に変更（ローカルとの視覚的区別）
+      # SSH接続時に背景色を暗い青系に変更、切断時にデフォルトに戻す
       if [[ -n $SSH_CONNECTION ]]; then
         printf '\033]11;#1a1a2e\007'
+        trap 'printf "\033]111\007"' EXIT
       fi
 
       # Load plugins
