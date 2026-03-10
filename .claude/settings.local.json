@@ -11,7 +11,11 @@
       "WebSearch",
       "Bash(nix flake check:*)",
       "Bash(head:*)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(for dir:*)",
+      "Bash(do echo:*)",
+      "Read(//Users/shiina/.dotfiles/**)",
+      "Bash(done)"
     ]
   }
 }
