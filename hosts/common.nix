@@ -72,6 +72,11 @@
       # Load p10k configuration
       [[ ! -f ~/.dotfiles/configs/p10k.zsh ]] || source ~/.dotfiles/configs/p10k.zsh
 
+      # SSH接続時に背景色を暗い青系に変更（ローカルとの視覚的区別）
+      if [[ -n $SSH_CONNECTION ]]; then
+        printf '\033]11;#1a1a2e\007'
+      fi
+
       # Load plugins
       source ${pkgs.zsh-fast-syntax-highlighting}/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
       source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
