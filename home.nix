@@ -139,13 +139,6 @@
     # Vim configuration
     ".vimrc".source = ./configs/vimrc;
 
-    # Claude Code configuration
-    ".claude/settings.json" = {
-      source = ./configs/claude-settings.json;
-      force = true;  # Allow overwriting since language field changes dynamically
-    };
-    ".claude/CLAUDE.md".source = ./configs/claude-claude-md.md;
-
     # SSH configuration (excluding private keys)
     ".ssh/config".source = ./configs/ssh-config;
 
@@ -338,69 +331,63 @@
     fi
   '';
 
-  # Activation script to share Claude skills with Codex without replacing Codex built-ins
-  home.activation.codexClaudeSkills = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    CODEX_SKILLS_DIR="$HOME/.codex/skills"
-    CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
+  # Activation script for Claude/Codex agent configs and shared skills
+  home.activation.agentConfigs = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    AGENT_SKILLS_SOURCE="${./configs/agent/skills}"
 
-    if [ ! -d "$CLAUDE_SKILLS_DIR" ]; then
-      exit 0
-    fi
+    # --- Claude ---
+    CLAUDE_DIR="$HOME/.claude"
+    $DRY_RUN_CMD mkdir -p "$CLAUDE_DIR"
 
-    $DRY_RUN_CMD mkdir -p "$CODEX_SKILLS_DIR"
-
-    # Keep Codex built-in .system intact; do not replace the entire skills directory.
-    for codex_entry in "$CODEX_SKILLS_DIR"/*; do
-      if [ ! -e "$codex_entry" ] && [ ! -L "$codex_entry" ]; then
-        continue
-      fi
-
-      skill_name="$(basename "$codex_entry")"
-      if [ "$skill_name" = ".system" ] || [ ! -L "$codex_entry" ]; then
-        continue
-      fi
-
-      target="$(readlink "$codex_entry")"
-      case "$target" in
-        "$CLAUDE_SKILLS_DIR"/*)
-          if [ ! -f "$target/SKILL.md" ]; then
-            $DRY_RUN_CMD rm -f "$codex_entry"
-          fi
-          ;;
-      esac
+    # 既存の Nix store シンボリックリンクを除去（初回マイグレーション）
+    for f in "$CLAUDE_DIR/settings.json" "$CLAUDE_DIR/CLAUDE.md"; do
+      [ -L "$f" ] && $DRY_RUN_CMD rm "$f"
     done
 
-    for claude_skill in "$CLAUDE_SKILLS_DIR"/*; do
-      if [ ! -d "$claude_skill" ] || [ ! -f "$claude_skill/SKILL.md" ]; then
-        continue
-      fi
+    # 設定ファイルを書き込み可能コピーとしてデプロイ
+    $DRY_RUN_CMD cp "${./configs/claude-settings.json}" "$CLAUDE_DIR/settings.json"
+    $DRY_RUN_CMD cp "${./configs/claude-claude-md.md}" "$CLAUDE_DIR/CLAUDE.md"
+    $DRY_RUN_CMD chmod u+w "$CLAUDE_DIR/settings.json" "$CLAUDE_DIR/CLAUDE.md"
 
+    # --- Skills (共有、~/.claude/skills/ が正規の場所) ---
+    CLAUDE_SKILLS_DIR="$CLAUDE_DIR/skills"
+    $DRY_RUN_CMD mkdir -p "$CLAUDE_SKILLS_DIR"
+    for skill_source in "$AGENT_SKILLS_SOURCE"/*/; do
+      skill_name="$(basename "$skill_source")"
+      $DRY_RUN_CMD rm -rf "$CLAUDE_SKILLS_DIR/$skill_name"
+      $DRY_RUN_CMD cp -r "$skill_source" "$CLAUDE_SKILLS_DIR/$skill_name"
+    done
+    $DRY_RUN_CMD chmod -R u+w "$CLAUDE_SKILLS_DIR"
+    $DRY_RUN_CMD mkdir -p "$CLAUDE_SKILLS_DIR/learned"
+
+    # --- Codex ---
+    CODEX_DIR="$HOME/.codex"
+    $DRY_RUN_CMD mkdir -p "$CODEX_DIR"
+
+    $DRY_RUN_CMD cp "${./configs/codex-config.toml}" "$CODEX_DIR/config.toml"
+    $DRY_RUN_CMD cp "${./configs/codex-agents-md.md}" "$CODEX_DIR/AGENTS.md"
+    $DRY_RUN_CMD chmod u+w "$CODEX_DIR/config.toml" "$CODEX_DIR/AGENTS.md"
+
+    # --- Codex Skills: Claude skills へのシンボリックリンク ---
+    CODEX_SKILLS_DIR="$CODEX_DIR/skills"
+    $DRY_RUN_CMD mkdir -p "$CODEX_SKILLS_DIR"
+
+    # 古いリンクのクリーンアップ
+    for codex_entry in "$CODEX_SKILLS_DIR"/*; do
+      [ ! -L "$codex_entry" ] && continue
+      skill_name="$(basename "$codex_entry")"
+      [ "$skill_name" = ".system" ] && continue
+      target="$(readlink "$codex_entry")"
+      case "$target" in "$CLAUDE_SKILLS_DIR"/*) [ ! -f "$target/SKILL.md" ] && $DRY_RUN_CMD rm -f "$codex_entry" ;; esac
+    done
+
+    # 各スキルのシンボリックリンク作成
+    for claude_skill in "$CLAUDE_SKILLS_DIR"/*; do
+      [ ! -d "$claude_skill" ] || [ ! -f "$claude_skill/SKILL.md" ] && continue
       skill_name="$(basename "$claude_skill")"
       codex_link="$CODEX_SKILLS_DIR/$skill_name"
-
-      if [ -L "$codex_link" ]; then
-        target="$(readlink "$codex_link")"
-        if [ "$target" = "$claude_skill" ]; then
-          continue
-        fi
-      fi
-
-      if [ -e "$codex_link" ] || [ -L "$codex_link" ]; then
-        if [ -L "$codex_link" ]; then
-          target="$(readlink "$codex_link")"
-          case "$target" in
-            "$CLAUDE_SKILLS_DIR"/*)
-              $DRY_RUN_CMD rm -f "$codex_link"
-              ;;
-            *)
-              continue
-              ;;
-          esac
-        else
-          continue
-        fi
-      fi
-
+      [ -L "$codex_link" ] && [ "$(readlink "$codex_link")" = "$claude_skill" ] && continue
+      [ -e "$codex_link" ] && [ ! -L "$codex_link" ] && continue
       $DRY_RUN_CMD ln -sfn "$claude_skill" "$codex_link"
     done
   '';

@@ -13,11 +13,11 @@ chezmoi から Nix への移行が完了し、全ての設定が宣言的に管�
 ## 主要なコマンド
 
 ```bash
-# 設定の変更を適用
-sudo darwin-rebuild switch --flake ~/.dotfiles
+# 設定の変更を適用（personal マシン）
+sudo darwin-rebuild switch --flake ~/.dotfiles#personal
 
 # 設定をビルドのみ（適用しない）
-darwin-rebuild build --flake ~/.dotfiles
+darwin-rebuild build --flake ~/.dotfiles#personal
 
 # 前の世代にロールバック
 darwin-rebuild --rollback
@@ -41,6 +41,11 @@ darwin-rebuild --rollback
     yazi/                # Yaziファイルマネージャ
     vimrc                # Vim設定
     claude-settings.json # Claude Code設定
+    claude-claude-md.md  # ~/.claude/CLAUDE.md
+    codex-config.toml    # ~/.codex/config.toml
+    codex-agents-md.md   # ~/.codex/AGENTS.md
+    agent/
+      skills/            # 共有スキル（Claude/Codex 両方で使用）
     rotate-language.sh   # 言語ローテーションスクリプト
 ```
 

@@ -1,0 +1,12 @@
+model = "gpt-5.4"
+model_reasoning_effort = "xhigh"
+model_context_window = 1000000
+model_auto_compact_token_limit = 9500000
+
+project_doc_fallback_filenames = ["CLAUDE.md"]
+
+[projects."/Users/shiina/.dotfiles"]
+trust_level = "trusted"
+
+[tui]
+status_line = ["model-with-reasoning", "context-remaining", "current-dir", "git-branch", "context-used", "five-hour-limit", "context-window-size"]
