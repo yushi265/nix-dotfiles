@@ -125,6 +125,8 @@
       alias zj="zellij"
       alias zja="zellij attach"
       alias zjl="zellij list-sessions"
+      alias zjd="zellij delete-session"
+      alias zjs="zellij -s"
       alias vim="nvim"
       alias vi="nvim"
       alias cat="${pkgs.bat}/bin/bat"
