@@ -317,6 +317,13 @@
     ${pkgs.mise}/bin/mise install --quiet
   '';
 
+  # Activation script to install obsidian-headless for terminal Obsidian Sync
+  home.activation.obsidianHeadless = lib.hm.dag.entryAfter [ "miseInstall" ] ''
+    export PNPM_HOME="$HOME/.local/share/pnpm"
+    run mkdir -p "$PNPM_HOME"
+    run ${pkgs.pnpm}/bin/pnpm install -g obsidian-headless 2>/dev/null || true
+  '';
+
   # Activation script to copy nvim config with writable lazy-lock.json
   home.activation.nvimConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
     NVIM_DIR="$HOME/.config/nvim"

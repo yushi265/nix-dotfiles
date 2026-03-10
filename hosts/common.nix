@@ -63,6 +63,9 @@
     '';
 
     interactiveShellInit = ''
+      # Homebrew PATH (for cask-installed tools like codex)
+      eval "$(/opt/homebrew/bin/brew shellenv)"
+
       # Load Powerlevel10k theme
       source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
 
@@ -314,7 +317,7 @@
       "cmux"
       "scroll-reverser"
       "slack"
-      "tailscale"
+      "tailscale-app"
     ];
   };
 
