@@ -66,6 +66,9 @@
       # Homebrew PATH (for cask-installed tools like codex)
       eval "$(/opt/homebrew/bin/brew shellenv)"
 
+      # Options
+      setopt AUTO_CD
+
       # Load Powerlevel10k theme
       source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
 
