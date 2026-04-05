@@ -302,7 +302,7 @@
     onActivation = {
       cleanup = "none";
       autoUpdate = true;
-      upgrade = true;
+      upgrade = false;
     };
 
     # GUI applications (macOS-specific tools only)
