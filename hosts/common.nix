@@ -37,6 +37,7 @@
     mise
     pnpm
     claude-code-bin
+    chezmoi
 
     # Zsh plugins
     zsh-powerlevel10k
