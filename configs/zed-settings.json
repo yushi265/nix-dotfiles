@@ -39,6 +39,6 @@
   "theme": {
     "mode": "system",
     "light": "Ayu Light",
-    "dark": "Catppuccin Mocha - No Italics",
-  },
+    "dark": "Catppuccin Mocha - No Italics"
+  }
 }
