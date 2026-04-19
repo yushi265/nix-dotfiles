@@ -1,0 +1,7 @@
+{{- $machineType := "work" -}}
+{{- if or (contains "MacBook-Pro" .chezmoi.hostname) (eq .chezmoi.hostname "mbp-m1") -}}
+{{-   $machineType = "personal" -}}
+{{- end -}}
+
+[data]
+machineType = "{{ $machineType }}"
