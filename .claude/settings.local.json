@@ -15,7 +15,8 @@
       "Bash(for dir:*)",
       "Bash(do echo:*)",
       "Read(//Users/shiina/.dotfiles/**)",
-      "Bash(done)"
+      "Bash(done)",
+      "WebFetch(domain:search.nixos.org)"
     ]
   },
   "sandbox": {
