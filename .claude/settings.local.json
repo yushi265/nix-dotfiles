@@ -17,7 +17,9 @@
       "Read(//Users/shiina/.dotfiles/**)",
       "Bash(done)",
       "WebFetch(domain:search.nixos.org)",
-      "Bash(chezmoi --source=~/.dotfiles diff)"
+      "Bash(chezmoi --source=~/.dotfiles diff)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)"
     ]
   },
   "sandbox": {
