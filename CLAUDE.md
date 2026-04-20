@@ -1,207 +1,117 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working with this Nix configuration.
+This file provides guidance to Claude Code when working with this repository.
 
 ## Overview
 
-これは nix-darwin + home-manager で管理された macOS dotfiles リポジトリです。
-chezmoi から Nix への移行が完了し、全ての設定が宣言的に管理されています。
+nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) の**ハイブリッド構成**。
 
-- **nix-darwin**: システムレベルの設定（パッケージ、Zsh、Homebrew、macOS設定）
-- **home-manager**: ユーザーレベルの設定（dotfiles、Git設定、アプリケーション設定）
+- **nix-darwin** (`nix/hosts/common.nix`): パッケージ / Homebrew / Zsh / macOS defaults
+- **home-manager** (`nix/home.nix`): stateVersion / sessionPath のみ (最小構成)
+- **chezmoi** (`chezmoi/`): dotfiles 一式 (git / nvim / ghostty / aws / claude 等)
 
 ## 主要なコマンド
 
 ```bash
-# 設定の変更を適用（personal マシン）
-sudo darwin-rebuild switch --flake ~/.dotfiles#personal
+# システム設定を適用 (personal マシン)
+sudo darwin-rebuild switch --flake ~/.dotfiles/nix#personal
+# または zsh 関数で
+rebuild
 
-# 設定をビルドのみ（適用しない）
-darwin-rebuild build --flake ~/.dotfiles#personal
+# ビルドのみ (適用しない)
+darwin-rebuild build --flake ~/.dotfiles/nix#personal
 
-# 前の世代にロールバック
+# dotfiles を適用
+moi apply       # = chezmoi apply
+moi diff        # = chezmoi diff
+
+# ロールバック
 darwin-rebuild --rollback
 ```
 
-## アーキテクチャ
-
-### ディレクトリ構造
+## ディレクトリ構造
 
 ```
 ~/.dotfiles/
-  flake.nix              # Flake entry point
-  flake.lock             # 依存関係のロック
-  hosts/
-    common.nix           # システム設定 + Zsh + パッケージ
-  home.nix               # home-manager ユーザー設定
-  configs/
-    p10k.zsh             # Powerlevel10k設定
-    ghostty-config       # Ghostty設定
-    nvim/                # Neovim (LazyVim)
-    yazi/                # Yaziファイルマネージャ
-    vimrc                # Vim設定
-    claude-settings.json # Claude Code設定
-    claude-claude-md.md  # ~/.claude/CLAUDE.md
-    codex-config.toml    # ~/.codex/config.toml
-    codex-agents-md.md   # ~/.codex/AGENTS.md
-    agent/
-      skills/            # 共有スキル（Claude/Codex 両方で使用）
-    rotate-language.sh   # 言語ローテーションスクリプト
+  nix/
+    flake.nix              # Flake エントリポイント
+    flake.lock             # 依存関係のロック
+    hosts/common.nix       # システム設定 + Zsh + パッケージ
+    home.nix               # home-manager (最小)
+  chezmoi/
+    .chezmoi.toml.tmpl     # machineType 自動判定 + sourceDir
+    dot_gitconfig          # ~/.gitconfig
+    dot_p10k.zsh           # ~/.p10k.zsh
+    dot_tmux.conf, dot_vimrc, dot_npmrc
+    private_dot_aws/       # ~/.aws/config (machineType template)
+    private_dot_claude/    # ~/.claude/
+    private_dot_codex/     # ~/.codex/
+    private_dot_config/    # ~/.config/{ghostty,nvim,yazi,zed,zellij,mise,lazygit,Code/User}
+    private_dot_ssh/       # ~/.ssh/config
+    run_*                  # mise install / VSCode 拡張 / obsidian / codex skills
+  README.md
+  CLAUDE.md
+  AGENTS.md
 ```
 
-### マシンタイプ切り替え
+### machineType 判定
 
-`flake.nix` でホスト名から `machineType` を自動判定:
-- "MacBook-Pro" → `personal`
-- その他 → `work`
+`nix/flake.nix` と `chezmoi/.chezmoi.toml.tmpl` の両方でホスト名から自動判定:
+- hostname に "MacBook-Pro" を含む or "mbp-m1" → `personal`
+- それ以外 → `work`
 
-`machineType` は全モジュールに `extraSpecialArgs` で渡され、
-条件分岐に使用されます（例: personal専用のaliases）。
+## Zsh 設定の管理
 
-## 設定されているツール
-
-### CLIツール（nixpkgs）
-- neovim, vim, lsd, ripgrep, fd, ghq, jq
-- bat, fzf, zoxide, git-open, yazi, delta
-
-### Zshプラグイン（nixpkgs）
-- powerlevel10k
-- fast-syntax-highlighting
-- zsh-autosuggestions
-- zsh-completions
-
-### GUIアプリ（Homebrew casks）
-- Ghostty
-
-## Zsh設定の管理
-
-### `programs.zsh`による宣言的管理
-
-**重要**: `.zshrc`ファイルは存在しません。全てのZsh設定は`hosts/common.nix`の`programs.zsh`セクションで宣言的に管理されています。
+`.zshrc` ファイルは存在しない。全 Zsh 設定は `nix/hosts/common.nix` の `programs.zsh` で宣言的に管理。
 
 ```nix
 programs.zsh = {
   enable = true;
-  promptInit = ''
-    # p10k instant prompt
-  '';
+  promptInit = ''# p10k instant prompt'';
   interactiveShellInit = ''
-    # プラグイン、エイリアス、関数など全ての設定
+    # プラグイン、エイリアス、関数など
   '';
 };
 ```
 
-### 設定内容（hosts/common.nix:48-262）
+設定内容 (`nix/hosts/common.nix`):
+- **プラグイン**: powerlevel10k, fast-syntax-highlighting, autosuggestions, completions
+- **エイリアス**: ls→lsd, cat→bat, vim→nvim, moi→chezmoi, git shortcuts, zellij shortcuts
+- **関数**: `repo()`, `gd()`, `rgf()` (FZF統合), `rebuild()` (darwin-rebuild wrapper)
+- **FZF / zoxide / mise**: 初期化とキーバインド
 
-- **プラグイン**: p10k, fast-syntax-highlighting, autosuggestions, completions
-- **エイリアス**: ls→lsd, cat→bat, vim→nvim, git shortcuts等
-- **関数**: `repo()`, `gd()`, `rgf()` - FZF統合の便利関数
-- **FZF**: キーバインド、プレビュー、fd/bat統合
-- **Zoxide**: スマートcd (`z`コマンド)
+設定変更の流れ:
+1. `nix/hosts/common.nix` を編集
+2. `rebuild` で適用 → Nix が `/etc/zshrc` を自動更新
 
-### マシンタイプ別設定
+## chezmoi dotfiles の管理
 
-`machineType`変数で条件分岐（254-261行目）:
+設定変更の流れ:
+1. `chezmoi/` 配下のファイルを直接編集
+2. `moi apply` で反映
 
-```nix
-'' + (if machineType == "personal" then ''
-  export PATH="$HOME/.bun/bin:$PATH"
-  alias coleta-next="/Users/shina/documents/coleta/coleta-next"
-  # ... personal専用のエイリアス
-'' else "");
-```
-
-### 設定変更の流れ
-
-1. `hosts/common.nix`の`programs.zsh.interactiveShellInit`を編集
-2. `sudo darwin-rebuild switch --flake ~/.dotfiles`で適用
-3. Nixが自動的に`/etc/zshrc`を生成・更新
-
-## 依存関係
-
-- **Nix**: パッケージマネージャ（Determinate Systems installer推奨）
-- **nix-darwin**: macOS システム設定管理
-- **home-manager**: ユーザー環境・dotfiles管理
-- **Homebrew**: GUI アプリケーション管理（nix-darwin統合）
-
-## home-manager による設定管理
-
-### ファイル構成
-
-`home.nix` でユーザー設定を宣言的に管理:
-
-```nix
-{
-  # Git設定（delta統合）
-  programs.git = {
-    enable = true;
-    extraConfig = { ... };
-  };
-
-  # XDG準拠の設定ファイル
-  xdg.configFile = {
-    "ghostty/config".source = ./configs/ghostty-config;
-    "nvim".source = ./configs/nvim;
-    "yazi".source = ./configs/yazi;
-  };
-
-  # ホームディレクトリ直下のファイル
-  home.file = {
-    ".vimrc".source = ./configs/vimrc;
-    ".claude/settings.json".source = ./configs/claude-settings.json;
-  };
-}
-```
-
-### 利点
-
-- **宣言的管理**: activationScripts 不要、設定ファイルの自動シンボリックリンク
-- **冪等性**: 何度実行しても同じ結果
-- **ロールバック**: 世代管理により過去の設定に戻せる
-- **クロスプラットフォーム**: NixOS/Linux でも同じ設定が使える
-
-## 新しいマシンでの環境構築
-
+新マシンでの初回セットアップ:
 ```bash
-# 1. Nixをインストール
-sh <(curl -L https://nixos.org/nix/install)
-
-# 2. このリポジトリをclone
-git clone <repository-url> ~/.dotfiles
-
-# 3. 設定を適用（初回はsudoが必要）
-cd ~/.dotfiles
-nix run nix-darwin -- switch --flake .
-
-# 4. 以降は通常のコマンドで
-sudo darwin-rebuild switch --flake ~/.dotfiles
+chezmoi init --source=~/.dotfiles/chezmoi
+chezmoi apply
 ```
 
-## トラブルシューティング
+## 設定されているツール
 
-### ビルドエラー
-```bash
-# 詳細なトレースを表示
-darwin-rebuild switch --flake ~/.dotfiles --show-trace
-```
+### CLIツール (nixpkgs)
+neovim, vim, lsd, ripgrep, fd, ghq, jq, bat, fzf, zoxide, git-open, yazi, delta,
+gh, lazygit, zellij, mise, pnpm, chezmoi, claude-code-bin
 
-### 前の世代にロールバック
-```bash
-darwin-rebuild --rollback
-```
+### Zsh プラグイン (nixpkgs)
+powerlevel10k, fast-syntax-highlighting, zsh-autosuggestions, zsh-completions
 
-### Nixストアの最適化
-```bash
-# ガベージコレクション（30日以上前の世代を削除）
-nix-collect-garbage --delete-older-than 30d
-
-# ストアの最適化
-nix-store --optimise
-```
+### GUI アプリ (Homebrew casks)
+ghostty, alt-tab, aqua-voice, codex, docker-desktop, google-chrome,
+karabiner-elements, obsidian, raycast, cmux, scroll-reverser, slack, tailscale-app
 
 ## 注意事項
 
-- **home-manager** がユーザー設定を管理（Git、dotfiles等）
-- **nix-darwin** がシステム設定を管理（Zsh、パッケージ、macOS設定等）
-- lazyvim.jsonはLazyVimが書き込み可能な状態で管理（gitignore推奨）
-- Claude settings.jsonの`language`フィールドは動的に変更されます
+- `nix/hosts/common.nix` の personal 分岐は machineType == "personal" でガード
+- `chezmoi/private_dot_aws/config.tmpl` も machineType で分岐 (personal のみ展開)
+- `private_dot_config/nvim/.chezmoiignore` で lazy-lock.json を追跡除外
+- Claude settings.json の `language` フィールドは動的に変更される

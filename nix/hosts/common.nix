@@ -289,7 +289,7 @@
 
       # Nix darwin-rebuild switch
       rebuild() {
-        sudo darwin-rebuild switch --flake ~/.dotfiles#${configName} "$@"
+        sudo darwin-rebuild switch --flake ~/.dotfiles/nix#${configName} "$@"
       }
     '' + (if machineType == "personal" then ''
       # Personal machine specific configuration
