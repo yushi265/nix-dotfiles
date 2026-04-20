@@ -3,5 +3,7 @@
 {{-   $machineType = "personal" -}}
 {{- end -}}
 
+sourceDir = "{{ .chezmoi.homeDir }}/.dotfiles"
+
 [data]
 machineType = "{{ $machineType }}"
