@@ -80,6 +80,9 @@
       source ${pkgs.zsh-fast-syntax-highlighting}/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
       source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
       fpath=(${pkgs.zsh-completions}/share/zsh/site-functions $fpath)
+      if [[ -d "$HOME/.docker/completions" ]]; then
+        fpath=($HOME/.docker/completions $fpath)
+      fi
 
       # Syntax highlighting styles
       ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets cursor root)
@@ -137,6 +140,7 @@
       alias vim="nvim"
       alias vi="nvim"
       alias cat="${pkgs.bat}/bin/bat"
+      alias moi="chezmoi"
 
       # Custom functions
       # repo: ghq repository/worktree selector with fzf
