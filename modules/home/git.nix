@@ -1,0 +1,36 @@
+{ ... }:
+
+{
+  programs.git = {
+    enable = true;
+
+    ignores = [
+      "*~"
+      ".DS_Store"
+    ];
+
+    settings = {
+      core = {
+        pager = "delta";
+      };
+      interactive = {
+        diffFilter = "delta --color-only";
+      };
+      delta = {
+        navigate = true;
+        light = false;
+        line-numbers = true;
+        syntax-theme = "Monokai Extended";
+      };
+      merge = {
+        conflictstyle = "diff3";
+      };
+      diff = {
+        colorMoved = "default";
+      };
+      ghq = {
+        root = "~/src";
+      };
+    };
+  };
+}

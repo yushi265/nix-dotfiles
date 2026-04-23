@@ -32,8 +32,20 @@ darwin-rebuild --rollback
   flake.nix              # Flake entry point
   flake.lock             # 依存関係のロック
   hosts/
-    common.nix           # システム設定 + Zsh + パッケージ
-  home.nix               # home-manager ユーザー設定
+    common.nix           # Darwin設定のオーケストレーター（imports のみ）
+  home.nix               # home-manager のオーケストレーター（imports のみ）
+  modules/
+    darwin/
+      packages.nix       # environment.systemPackages
+      zsh.nix            # programs.zsh + 関数定義（repo/gd/rgf）
+      homebrew.nix       # homebrew casks
+      system.nix         # macOS defaults + users
+    home/
+      git.nix            # programs.git + delta設定
+      aws.nix            # programs.awscli（personal only）
+      files.nix          # xdg.configFile + home.file + sessionPath
+      vscode.nix         # programs.vscode（拡張機能 + 設定）
+      activation.nix     # home.activation（nvim/claude/codex/mise）
   configs/
     p10k.zsh             # Powerlevel10k設定
     ghostty-config       # Ghostty設定
@@ -77,21 +89,9 @@ darwin-rebuild --rollback
 
 ### `programs.zsh`による宣言的管理
 
-**重要**: `.zshrc`ファイルは存在しません。全てのZsh設定は`hosts/common.nix`の`programs.zsh`セクションで宣言的に管理されています。
+**重要**: `.zshrc`ファイルは存在しません。全てのZsh設定は`modules/darwin/zsh.nix`の`programs.zsh`セクションで宣言的に管理されています。
 
-```nix
-programs.zsh = {
-  enable = true;
-  promptInit = ''
-    # p10k instant prompt
-  '';
-  interactiveShellInit = ''
-    # プラグイン、エイリアス、関数など全ての設定
-  '';
-};
-```
-
-### 設定内容（hosts/common.nix:48-262）
+### 設定内容（modules/darwin/zsh.nix）
 
 - **プラグイン**: p10k, fast-syntax-highlighting, autosuggestions, completions
 - **エイリアス**: ls→lsd, cat→bat, vim→nvim, git shortcuts等
@@ -101,19 +101,18 @@ programs.zsh = {
 
 ### マシンタイプ別設定
 
-`machineType`変数で条件分岐（254-261行目）:
+`machineType`変数で条件分岐（`modules/darwin/zsh.nix`末尾）:
 
 ```nix
 '' + (if machineType == "personal" then ''
-  export PATH="$HOME/.bun/bin:$PATH"
-  alias coleta-next="/Users/shina/documents/coleta/coleta-next"
+  alias coleta-next="/Users/${username}/documents/coleta/coleta-next"
   # ... personal専用のエイリアス
 '' else "");
 ```
 
 ### 設定変更の流れ
 
-1. `hosts/common.nix`の`programs.zsh.interactiveShellInit`を編集
+1. 該当モジュール（例: Zshなら`modules/darwin/zsh.nix`）を編集
 2. `sudo darwin-rebuild switch --flake ~/.dotfiles`で適用
 3. Nixが自動的に`/etc/zshrc`を生成・更新
 
