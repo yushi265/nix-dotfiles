@@ -15,3 +15,7 @@ result-*
 
 # Logs
 *.log
+
+# Secrets (age private keys - never commit)
+*.key
+secrets/*.pem

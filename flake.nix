@@ -13,9 +13,16 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.darwin.follows = "nix-darwin";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
-  outputs = { self, nixpkgs, nix-darwin, home-manager, ... }: let
+  outputs = { self, nixpkgs, nix-darwin, home-manager, agenix, ... }: let
     # Helper function to create darwin system
     mkDarwinSystem = { configName, hostname, username, system ? "aarch64-darwin" }: let
       # Derive machineType from hostname
@@ -41,6 +48,7 @@
           home-manager.users.${username} = import ./home.nix;
           home-manager.extraSpecialArgs = { inherit machineType; };
           home-manager.backupFileExtension = "backup";
+          home-manager.sharedModules = [ agenix.homeManagerModules.default ];
         }
       ];
     };
