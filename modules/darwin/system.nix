@@ -30,6 +30,5 @@
     };
 
     stateVersion = 5;
-    configurationRevision = null;
   };
 }

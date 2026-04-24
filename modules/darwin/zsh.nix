@@ -1,4 +1,4 @@
-{ pkgs, lib, machineType, username, configName, ... }:
+{ pkgs, lib, machineType, configName, ... }:
 
 {
   programs.zsh = {
@@ -25,19 +25,6 @@
       source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
       fpath=(${pkgs.zsh-completions}/share/zsh/site-functions $fpath)
 
-      # Syntax highlighting styles
-      ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets cursor root)
-      typeset -A ZSH_HIGHLIGHT_STYLES
-      ZSH_HIGHLIGHT_STYLES[bracket-error]='fg=red,bold'
-      ZSH_HIGHLIGHT_STYLES[bracket-level-1]='fg=blue,bold'
-      ZSH_HIGHLIGHT_STYLES[bracket-level-2]='fg=green,bold'
-      ZSH_HIGHLIGHT_STYLES[bracket-level-3]='fg=magenta,bold'
-      ZSH_HIGHLIGHT_STYLES[bracket-level-4]='fg=yellow,bold'
-      ZSH_HIGHLIGHT_STYLES[bracket-level-5]='fg=cyan,bold'
-      ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]='standout'
-      ZSH_HIGHLIGHT_STYLES[cursor]='bg=blue'
-      ZSH_HIGHLIGHT_STYLES[root]='bg=red'
-
       # FZF
       export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
       export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -61,11 +48,8 @@
       rebuild() {
         sudo darwin-rebuild switch --flake ~/.dotfiles#${configName} "$@"
       }
-    '' + (if machineType == "personal" then ''
-      alias coleta-next="/Users/${username}/documents/coleta/coleta-next"
-      alias coleta="/Users/${username}/documents/coleta/coleta/coleta-server"
-      alias awsp='export AWS_PROFILE="coleta/tf"'
-      alias awsd='export AWS_PROFILE="coleta-dev/tf"'
-    '' else "");
+    '' + lib.optionalString (machineType == "personal") ''
+      source ${../../configs/zsh/aliases.personal.zsh}
+    '';
   };
 }

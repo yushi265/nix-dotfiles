@@ -7,7 +7,6 @@
     # Editors
     vim
     neovim
-    vscode
     zed-editor
 
     # GUI Applications
