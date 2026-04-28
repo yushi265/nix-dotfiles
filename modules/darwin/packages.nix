@@ -30,6 +30,7 @@
     mise
     pnpm
     claude-code-bin
+    codex
 
     # Zsh plugins
     zsh-powerlevel10k
