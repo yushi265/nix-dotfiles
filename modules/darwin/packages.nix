@@ -3,6 +3,12 @@
 {
   nixpkgs.config.allowUnfree = true;
 
+  nixpkgs.overlays = [
+    (_: prev: {
+      direnv = prev.direnv.overrideAttrs (_: { doCheck = false; });
+    })
+  ];
+
   environment.systemPackages = with pkgs; [
     # Editors
     vim
@@ -29,7 +35,7 @@
     zellij
     mise
     pnpm
-    claude-code-bin
+    claude-code
     codex
 
     # Zsh plugins
