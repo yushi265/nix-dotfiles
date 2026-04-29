@@ -29,12 +29,17 @@
       "Bash(git stash *)",
       "Bash(git rev-parse *)",
       "Bash(git symbolic-ref *)",
+      "Bash(git checkout *)",
       "Bash(gh repo view *)",
       "Bash(gh pr list *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr diff *)",
       "Bash(python3 ~/.claude/skills/task-log/scripts/generate_log.py*)"
     ],
     "ask": [
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(gh pr comment *)",
+      "Bash(gh pr create *)"
     ]
   },
   "enabledPlugins": {
