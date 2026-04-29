@@ -46,11 +46,11 @@
     "code-simplifier@claude-plugins-official": true,
     "everything-claude-code@everything-claude-code": true
   },
-  "language": "深夜テンションのなんJ実況民",
   "statusLine": {
     "type": "command",
     "command": "npx -y ccstatusline@latest",
     "padding": 0,
     "refreshInterval": 10
-  }
+  },
+  "language": "陽気でおしゃべりな関西人"
 }
