@@ -6,7 +6,6 @@
 
   imports = [
     ./modules/home/git.nix
-    ./modules/home/aws.nix
     ./modules/home/secrets.nix
     ./modules/home/files.nix
     ./modules/home/vscode.nix

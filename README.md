@@ -33,7 +33,7 @@ rebuild
       system.nix         # macOS defaults
     home/
       git.nix            # Git + delta
-      aws.nix            # AWS CLI（personal only）
+      secrets.nix        # agenix secrets（AWS config など）
       files.nix          # dotfiles 配置
       vscode.nix         # VS Code
       activation.nix     # nvim / Claude / Codex セットアップ
@@ -68,7 +68,7 @@ rebuild
 - ホスト名に "MacBook-Pro" が含まれる → `personal`
 - その他 → `work`
 
-personal 専用設定（AWS CLI、coleta エイリアス等）は `lib.mkIf (machineType == "personal")` で条件分岐。
+personal 専用設定（AWS config の secret、coleta エイリアス等）は `lib.mkIf (machineType == "personal")` で条件分岐。
 
 ## 参考
 

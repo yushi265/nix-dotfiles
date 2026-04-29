@@ -26,7 +26,7 @@ darwin-rebuild --rollback        # 前の世代にロールバック
       system.nix         # macOS defaults + users
     home/
       git.nix            # programs.git + delta
-      aws.nix            # programs.awscli（personal only）
+      secrets.nix        # agenix secrets（AWS config など）
       files.nix          # xdg.configFile + home.file + sessionPath
       vscode.nix         # programs.vscode
       activation.nix     # home.activation（nvim/claude/codex/mise）
@@ -68,7 +68,7 @@ darwin-rebuild --rollback        # 前の世代にロールバック
 ## マシンタイプ別設定
 
 `machineType` は `specialArgs`/`extraSpecialArgs` 経由で全モジュールに渡される。
-personal 専用設定の例（`modules/darwin/zsh.nix` 末尾、`modules/home/aws.nix`）:
+personal 専用設定の例（`modules/darwin/zsh.nix` 末尾、`modules/home/secrets.nix`）:
 
 ```nix
 lib.mkIf (machineType == "personal") { ... }
