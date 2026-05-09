@@ -1,5 +1,5 @@
-model = "gpt-5.4"
-model_reasoning_effort = "high"
+model = "gpt-5.5"
+model_reasoning_effort = "low"
 model_context_window = 1000000
 model_auto_compact_token_limit = 9500000
 
@@ -8,8 +8,33 @@ project_doc_fallback_filenames = ["CLAUDE.md"]
 [projects."/Users/shiina/.dotfiles"]
 trust_level = "trusted"
 
-[projects."/Users/shiina/src/github.com/yushi265/reading-history"]
+[projects."/Users/shiina/src/github.com/COLETA-chat/coleta"]
+trust_level = "trusted"
+
+[projects."/Users/shiina/src/github.com/yushi265/practice-clean-archi-ddd"]
 trust_level = "trusted"
 
 [tui]
 status_line = ["model-with-reasoning", "context-remaining", "current-dir", "git-branch", "context-used", "five-hour-limit", "context-window-size"]
+
+[marketplaces.openai-bundled]
+last_updated = "2026-05-09T06:46:30Z"
+source_type = "local"
+source = "/Users/shiina/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-05-09T05:39:51Z"
+source_type = "local"
+source = "/Users/shiina/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."browser-use@openai-bundled"]
+enabled = true
