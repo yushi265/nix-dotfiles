@@ -13,11 +13,6 @@
     # Editors
     vim
     neovim
-    vscode
-    zed-editor
-
-    # GUI Applications
-    _1password-gui
 
     # CLI tools
     lsd
@@ -324,8 +319,11 @@
       "raycast"
       "cmux"
       "scroll-reverser"
+      "1password"
       "slack"
       "tailscale-app"
+      "visual-studio-code"
+      "zed"
     ];
   };
 
