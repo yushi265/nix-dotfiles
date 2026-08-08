@@ -62,6 +62,7 @@
     "claude-mem@thedotmack": true,
     "claude-security@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
+    "codex@openai-codex": true,
     "everything-claude-code@everything-claude-code": true,
     "gopls-lsp@claude-plugins-official": true,
     "logging-tool@logging-tool": true,
@@ -74,6 +75,13 @@
         "source": "directory",
         "path": "/Users/shiina/src/github.com/yushi265/logging-tool"
       }
+    },
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      },
+      "autoUpdate": true
     },
     "thedotmack": {
       "source": {
