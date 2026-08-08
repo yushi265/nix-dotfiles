@@ -29,9 +29,7 @@
     gh
     lazygit
     zellij
-    mise
     pnpm
-    claude-code-bin
     chezmoi
 
     # Zsh plugins
@@ -68,8 +66,7 @@
       # Load Powerlevel10k theme
       source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
 
-      # Load p10k configuration
-      [[ ! -f ~/.dotfiles/configs/p10k.zsh ]] || source ~/.dotfiles/configs/p10k.zsh
+      # p10k configuration (~/.p10k.zsh) is sourced from ~/.zshrc (chezmoi)
 
       # Load plugins
       source ${pkgs.zsh-fast-syntax-highlighting}/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
@@ -105,8 +102,8 @@
       # Zoxide initialization
       eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
 
-      # mise initialization
-      eval "$(${pkgs.mise}/bin/mise activate zsh)"
+      # mise initialization (managed by Homebrew)
+      [[ -x /opt/homebrew/bin/mise ]] && eval "$(/opt/homebrew/bin/mise activate zsh)"
 
       # Load local env if exists
       [[ -f "$HOME/.local/bin/env" ]] && source "$HOME/.local/bin/env"
@@ -304,6 +301,12 @@
       autoUpdate = true;
       upgrade = false;
     };
+
+    # CLI tools that need to track upstream faster than nixpkgs
+    # (nixpkgs lags mise by ~1-2 weeks; upgrade with `brew upgrade mise`)
+    brews = [
+      "mise"
+    ];
 
     # GUI applications (macOS-specific tools only)
     # Most GUI apps are now managed via nixpkgs in environment.systemPackages

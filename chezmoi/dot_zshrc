@@ -1,0 +1,8 @@
+# /etc/zshrc (nix の programs.zsh が生成) の後に読まれる個人設定レイヤー。
+# プラグイン・エイリアス・関数・mise activate は nix 側で管理している。
+#
+# PATH はここで変更しないこと。mise activate より後になるため、
+# mise が解決したツールのパスを上書きしてしまう。PATH は .zshenv に書く。
+
+# p10k configuration
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
