@@ -13,3 +13,15 @@
 # ソケットが同居しているため、ディレクトリごと追加すると実行時データが混ざる。
 .config/herdr/*
 !.config/herdr/config.toml
+
+# gh の認証トークン (oauth_token) を含むため追跡しない。config.yml のみ管理する。
+.config/gh/hosts.yml
+
+# .claude/skills/ は手書きの実体ディレクトリだけを管理する。
+#
+# grill-me は mattpocock/skills から自動インストールされる
+# (~/.agents/.skill-lock.json が管理)。追跡すると更新と衝突する。
+.claude/skills/grill-me
+
+# 空ディレクトリ
+.claude/skills/learned
