@@ -1,0 +1,10 @@
+.DS_Store
+
+# アプリが自動生成する状態データを含むため追跡しない。
+# 追跡すると last_updated 等の揮発値で永久に diff が出続け、
+# chezmoi apply が手元の設定を巻き戻す事故につながる。
+#
+# .codex/config.toml         : last_updated / last_revision / NUX カウンタ
+# .config/zed/settings.json  : GUI 操作 (パネル配置等) で随時上書きされる
+.codex/config.toml
+.config/zed/settings.json

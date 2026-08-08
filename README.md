@@ -1,77 +1,83 @@
-# nix-darwin dotfiles
+# dotfiles
 
-nix-darwin + home-manager による macOS 設定の宣言的管理。
+nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) のハイブリッド構成。
 
-## セットアップ
-
-```bash
-# 1. Nix をインストール（Determinate Systems 推奨）
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
-
-# 2. リポジトリをクローン
-git clone https://github.com/yushi265/nix-dotfiles.git ~/.dotfiles
-
-# 3. 初回適用
-nix run nix-darwin -- switch --flake ~/.dotfiles#personal
-
-# 4. 以降の更新（rebuild エイリアスが使える）
-rebuild
-```
-
-## 構造
+## ディレクトリ構造
 
 ```
 ~/.dotfiles/
-  flake.nix
-  home.nix               # home-manager エントリーポイント
-  hosts/common.nix       # nix-darwin エントリーポイント
-  modules/
-    darwin/
-      packages.nix       # CLI ツール・エディタ
-      zsh.nix            # Zsh・プラグイン・FZF
-      homebrew.nix       # GUI アプリ (casks)
-      system.nix         # macOS defaults
-    home/
-      git.nix            # Git + delta
-      secrets.nix        # agenix secrets（AWS config など）
-      files.nix          # dotfiles 配置
-      vscode.nix         # VS Code
-      activation.nix     # nvim / Claude / Codex セットアップ
-  configs/
-    zsh/
-      aliases.zsh        # エイリアス
-      functions.zsh      # repo() / gd() / rgf()
-    scripts/
-      agent-configs.sh   # Claude/Codex 設定デプロイ
-    nvim/                # Neovim (LazyVim)
-    ghostty-config       # Ghostty
-    p10k.zsh             # Powerlevel10k
-    ...
+├── nix/                          # nix-darwin + home-manager
+│   ├── flake.nix                 # Flake エントリポイント
+│   ├── flake.lock
+│   ├── hosts/common.nix          # パッケージ / Zsh / Homebrew / macOS 設定
+│   └── home.nix                  # home-manager (最小構成)
+├── chezmoi/                      # dotfiles (chezmoi 管理)
+│   ├── .chezmoi.toml.tmpl        # machineType 自動判定 + sourceDir
+│   ├── dot_gitconfig
+│   ├── dot_p10k.zsh, dot_tmux.conf, dot_vimrc, dot_npmrc
+│   ├── private_dot_aws/          # ~/.aws/config (machineType template)
+│   ├── private_dot_claude/       # ~/.claude/
+│   ├── private_dot_codex/        # ~/.codex/
+│   ├── private_dot_config/       # ~/.config/{ghostty,nvim,yazi,zed,zellij,mise,lazygit,Code,...}
+│   ├── private_dot_ssh/          # ~/.ssh/config
+│   └── run_*                     # mise / VSCode 拡張 / obsidian / codex skills
+├── README.md
+├── CLAUDE.md
+└── AGENTS.md
 ```
 
-## よく使うカスタマイズ
+## 役割分担
 
-| やりたいこと | ファイル |
+| 管轄 | 担当 |
 |---|---|
-| パッケージ追加 | `modules/darwin/packages.nix` |
-| エイリアス追加 | `configs/zsh/aliases.zsh` |
-| シェル関数追加 | `configs/zsh/functions.zsh` |
-| GUI アプリ追加 | `modules/darwin/homebrew.nix` |
-| dotfile 追加 | `modules/home/files.nix` |
+| **nix-darwin** (`nix/hosts/common.nix`) | CLI パッケージ / Homebrew casks / Zsh 設定 / macOS defaults |
+| **home-manager** (`nix/home.nix`) | stateVersion / sessionPath (最小) |
+| **chezmoi** (`chezmoi/`) | dotfiles 一式 (git / nvim / ghostty / aws / claude 等) |
 
-編集後は `rebuild` で適用。
+machineType は hostname から自動判定: `MacBook-Pro` / `mbp-m1` → `personal`、それ以外 → `work`
 
-## マルチマシン対応
+## 新マシンセットアップ
 
-`flake.nix` がホスト名から `machineType` を自動判定:
+```bash
+# 1. Nix インストール
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 
-- ホスト名に "MacBook-Pro" が含まれる → `personal`
-- その他 → `work`
+# 2. リポジトリを clone
+git clone https://github.com/yushi265/nix-dotfiles.git ~/.dotfiles
 
-personal 専用設定（AWS config の secret、coleta エイリアス等）は `lib.mkIf (machineType == "personal")` で条件分岐。
+# 3. nix-darwin を適用
+nix run nix-darwin -- switch --flake ~/.dotfiles/nix#personal
 
-## 参考
+# 4. chezmoi で dotfiles を展開
+chezmoi init --source=~/.dotfiles/chezmoi
+chezmoi apply
+```
 
-- [nix-darwin](https://github.com/LnL7/nix-darwin)
-- [home-manager](https://github.com/nix-community/home-manager)
-- [Nixpkgs Search](https://search.nixos.org/packages)
+## 日常操作
+
+```bash
+# システム設定を変更・適用 (パッケージ追加、Zsh 設定等)
+rebuild                        # = sudo darwin-rebuild switch --flake ~/.dotfiles/nix#...
+
+# dotfiles を変更・適用
+moi diff                       # = chezmoi diff
+moi apply                      # = chezmoi apply
+
+# flake.lock を更新
+cd ~/.dotfiles && nix flake update
+rebuild
+```
+
+## パッケージ追加
+
+```bash
+# CLI ツール: nix/hosts/common.nix の environment.systemPackages に追加
+# GUI アプリ: nix/hosts/common.nix の homebrew.casks に追加
+rebuild
+```
+
+## ロールバック
+
+```bash
+sudo darwin-rebuild --rollback
+```

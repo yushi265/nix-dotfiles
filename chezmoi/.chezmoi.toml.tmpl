@@ -1,0 +1,9 @@
+{{- $machineType := "work" -}}
+{{- if or (contains "MacBook-Pro" .chezmoi.hostname) (eq .chezmoi.hostname "mbp-m1") -}}
+{{-   $machineType = "personal" -}}
+{{- end -}}
+
+sourceDir = "{{ .chezmoi.homeDir }}/.dotfiles/chezmoi"
+
+[data]
+machineType = "{{ $machineType }}"

@@ -13,12 +13,5 @@ result-*
 .vscode/
 .idea/
 
-# Claude Code local settings (machine-specific)
-.claude/settings.local.json
-
 # Logs
 *.log
-
-# Secrets (age private keys - never commit)
-*.key
-secrets/*.pem

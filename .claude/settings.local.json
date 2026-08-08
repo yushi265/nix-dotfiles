@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(nix flake update:*)",
+      "Bash(darwin-rebuild build:*)",
+      "Bash(sudo darwin-rebuild switch:*)",
+      "Bash(git config:*)",
+      "Bash(brew search:*)",
+      "Bash(nix search:*)",
+      "Bash(ls:*)",
+      "WebSearch",
+      "Bash(nix flake check:*)",
+      "Bash(head:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(for dir:*)",
+      "Bash(do echo:*)",
+      "Read(//Users/shiina/.dotfiles/**)",
+      "Bash(done)",
+      "WebFetch(domain:search.nixos.org)",
+      "Bash(chezmoi --source=~/.dotfiles diff)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)"
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  }
+}
