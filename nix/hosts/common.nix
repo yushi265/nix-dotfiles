@@ -88,6 +88,10 @@
     # GUI applications (macOS-specific tools only)
     # Most GUI apps are now managed via nixpkgs in environment.systemPackages
     casks = [
+      # p10k のアイコン表示に必要 (~/.p10k.zsh の POWERLEVEL9K_MODE=nerdfont-v3)。
+      # ghostty の font-family もこのフォント名を指している。
+      "font-jetbrains-mono-nerd-font"
+
       "alt-tab"
       "aqua-voice"
       "codex"

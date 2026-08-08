@@ -11,7 +11,7 @@
 # ========================================
 
 # Nerd Fontを使用（アイコン表示に対応）
-font-family = "JetBrains Mono"
+font-family = "JetBrainsMono Nerd Font"
 font-family = "Osaka−等幅"
 font-size = 14
 font-feature = -dlig
