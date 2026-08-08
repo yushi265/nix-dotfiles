@@ -19,11 +19,11 @@ nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) の
 │   ├── dot_gitconfig
 │   ├── dot_p10k.zsh, dot_tmux.conf, dot_vimrc, dot_npmrc
 │   ├── private_dot_aws/          # ~/.aws/config (machineType template)
-│   ├── private_dot_claude/       # ~/.claude/
-│   ├── private_dot_codex/        # ~/.codex/
-│   ├── private_dot_config/       # ~/.config/{ghostty,nvim,yazi,zed,zellij,mise,lazygit,Code,...}
+│   ├── private_dot_claude/       # ~/.claude/ (CLAUDE.md / settings.json / rules / skills)
+│   ├── private_dot_codex/        # ~/.codex/ (AGENTS.md / keybindings.json)
+│   ├── private_dot_config/       # ~/.config/{ghostty,nvim,yazi,zellij,mise,lazygit,git,gh,...}
 │   ├── private_dot_ssh/          # ~/.ssh/config
-│   └── run_*                     # mise / VSCode 拡張 / obsidian / codex skills
+│   └── run_*                     # obsidian / mise / codex skills
 ├── README.md
 ├── CLAUDE.md
 └── AGENTS.md

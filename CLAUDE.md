@@ -44,11 +44,12 @@ darwin-rebuild --rollback
     dot_p10k.zsh           # ~/.p10k.zsh
     dot_tmux.conf, dot_vimrc, dot_npmrc
     private_dot_aws/       # ~/.aws/config (machineType template)
-    private_dot_claude/    # ~/.claude/
-    private_dot_codex/     # ~/.codex/
-    private_dot_config/    # ~/.config/{ghostty,nvim,yazi,zed,zellij,mise,lazygit,Code/User}
+    private_dot_claude/    # ~/.claude/{CLAUDE.md,settings.json,rules,skills}
+    private_dot_codex/     # ~/.codex/{AGENTS.md,keybindings.json}
+    private_dot_config/    # ~/.config/{ghostty,nvim,yazi,zellij,mise,lazygit,git,gh,herdr,
+                           #            karabiner,ccstatusline}
     private_dot_ssh/       # ~/.ssh/config
-    run_*                  # mise install / VSCode 拡張 / obsidian / codex skills
+    run_*                  # obsidian / mise install / codex skills
   README.md
   CLAUDE.md
   AGENTS.md
@@ -115,3 +116,17 @@ karabiner-elements, obsidian, raycast, cmux, scroll-reverser, slack, tailscale-a
 - `chezmoi/private_dot_aws/config.tmpl` も machineType で分岐 (personal のみ展開)
 - `private_dot_config/nvim/.chezmoiignore` で lazy-lock.json を追跡除外
 - Claude settings.json の `language` フィールドは動的に変更される
+- **`run_onchange_*` で `{{ include ... | sha256sum }}` を使うならファイル名を
+  `.tmpl` で終わらせること。** サフィックスがないとテンプレート展開されず、
+  ハッシュ行がただのコメント文字列になって再実行が一切効かなくなる
+- Claude のスキルは `~/.claude/skills/` が正 (Claude Code が読むのはこちら)。
+  `~/.claude/agent/skills/` は同内容の重複コピーで管理外
+
+### 意図的に追跡しないもの
+
+`chezmoi/.chezmoiignore` に理由付きで記載。大別すると3種類:
+
+1. **認証情報を含む** — `.config/gh/hosts.yml` / `.config/raycast/config.json`
+2. **ツール側が上書きする** — herdr の hook スクリプト (`managed by herdr` と明記)、
+   `.config/zed/settings.json` や codexbar など GUI 操作で書き換わるもの
+3. **別リポジトリ・外部が正** — `grill-me` (`~/.agents/.skill-lock.json` 管理)
