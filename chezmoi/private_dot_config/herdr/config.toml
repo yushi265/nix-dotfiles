@@ -78,9 +78,9 @@ name = "catppuccin"
 # close_workspace = "prefix+shift+d"
 # previous_workspace = "" # optional, unset by default
 # next_workspace = ""     # optional, unset by default
-# previous_agent = ""     # optional, unset by default
-# next_agent = ""         # optional, unset by default
-# focus_agent = ""        # optional indexed binding, e.g. "prefix+alt+1..9"
+previous_agent = "prefix+ctrl+k"
+next_agent = "prefix+ctrl+j"
+focus_agent = "prefix+ctrl+1..9"
 # remote_image_paste = "ctrl+v" # only active in herdr --remote; empty disables raw-key image paste
 # new_tab = "prefix+c"
 # rename_tab = "prefix+shift+t"
@@ -214,7 +214,7 @@ sidebar_max_width = 50
 
 # Agent panel ordering: "spaces" (grouped by space) or "priority" (attention queue).
 # "workspaces" is accepted as an alias for "spaces".
-# agent_panel_sort = "spaces"
+agent_panel_sort = "priority"
 
 # Expanded agent rows. Built-ins are state_icon, state_text, workspace, tab, pane, agent,
 # terminal_title, and terminal_title_stripped.
@@ -310,18 +310,18 @@ pane_history = false
 # macOS this selects the ASCII-capable keyboard layout; on Windows it toggles
 # a Korean IME between Hangul and English (other IME languages are left
 # unchanged). macOS and Windows only; best-effort. Default: false.
-# switch_ascii_input_source_in_prefix = false
+switch_ascii_input_source_in_prefix = true
 # Expose the focused pane's cursor to the outer terminal so macOS input
 # methods keep tracking the candidate window when TUIs paint their own
 # cursor (Claude Code, pi, codex). Trade-off: extra cursor visible for
 # apps that hide it without painting a replacement (vim normal mode, etc.).
-# reveal_hidden_cursor_for_cjk_ime = false
+reveal_hidden_cursor_for_cjk_ime = true
 # Optional allow-list: only reveal for focused panes whose detected agent
 # matches one of these names. Empty means apply to any focused pane.
 # If the list contains no valid names, the reveal does not apply.
 # Accepted: pi, claude, codex, gemini, cursor, devin, cline, opencode,
 # copilot, kimi, kiro, droid, amp, grok, hermes, kilo, qodercli, qoder.
-# cjk_ime_agents = []
+cjk_ime_agents = ["claude", "codex"]
 # Cursor shape rendered when reveal_hidden_cursor_for_cjk_ime is true.
 # Values: block, steady_block (default), underline, steady_underline, bar, steady_bar.
 # cjk_ime_cursor_shape = "steady_block"
@@ -336,13 +336,21 @@ key = "prefix+ctrl+g"
 type = "popup"
 command = "lazygit"
 description = "run lazygit"
-width = "100%"
-height = "100%"
+width = "95%"
+height = "95%"
 
 [[keys.command]]
 key = "prefix+ctrl+v"
 type = "popup"
 command = "nvim ."
 description = "run vim"
-width = "100%"
-height = "100%"
+width = "95%"
+height = "95%"
+
+[[keys.command]]
+key = "prefix+ctrl+f"
+type = "popup"
+command = "zsh -ic rgf"
+description = "ripgrep + fzf"
+width = "95%"
+height = "95%"
