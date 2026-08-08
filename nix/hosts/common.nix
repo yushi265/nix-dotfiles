@@ -102,8 +102,8 @@
       # Zoxide initialization
       eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
 
-      # mise initialization (managed by Homebrew)
-      [[ -x /opt/homebrew/bin/mise ]] && eval "$(/opt/homebrew/bin/mise activate zsh)"
+      # mise initialization is in ~/.zshrc (chezmoi) so that PATH additions
+      # can be ordered before it. See chezmoi/dot_zshrc.
 
       # Load local env if exists
       [[ -f "$HOME/.local/bin/env" ]] && source "$HOME/.local/bin/env"

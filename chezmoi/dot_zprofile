@@ -1,12 +1,6 @@
 eval "$(/opt/homebrew/bin/brew shellenv zsh)"
 
-# PATH の追加は .zshenv ではなくここに書くこと。
-# .zshenv は macOS の path_helper (/etc/zprofile) より先に読まれるため、
-# そこで先頭に置いたパスは path_helper の PATH 再構築で後ろへ回される。
-# .zprofile は path_helper の後・/etc/zshrc (nix, mise activate) の前に
-# 読まれるので、ここなら順序が保たれ mise も自分のパスを最優先にできる。
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.npm-global/bin:$PATH"
+# PATH の追加は .zshrc で行う (mise activate との順序を保証するため)。
 
 # Added by Obsidian
 export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"

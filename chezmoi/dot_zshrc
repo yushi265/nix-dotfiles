@@ -1,8 +1,21 @@
 # /etc/zshrc (nix の programs.zsh が生成) の後に読まれる個人設定レイヤー。
-# プラグイン・エイリアス・関数・mise activate は nix 側で管理している。
+# プラグイン・エイリアス・関数は nix 側 (nix/hosts/common.nix) で管理している。
 #
-# PATH はここで変更しないこと。mise activate より後になるため、
-# mise が解決したツールのパスを上書きしてしまう。PATH は .zshenv に書く。
+# PATH の追加と mise activate は、この順序でこのファイルに置くこと。
+# mise は activate した時点の PATH を元にツールのパスを先頭へ挿入するため、
+# PATH の変更が mise activate より後にあると mise の解決を上書きしてしまう。
+# (実際に mise current が node 24.19.0 を指すのに 24.13.1 が使われていた)
+
+# zellij / tmux などシェルがネストすると .zshrc が再実行され、親から
+# 継承した PATH に同じパスが重複して積まれる。path を unique 指定にして
+# 重複を自動で落とす (先頭側が残る)。
+typeset -U path PATH
+
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.npm-global/bin:$PATH"
+
+# mise initialization (Homebrew 管理)。必ず PATH の設定より後に置くこと。
+[[ -x /opt/homebrew/bin/mise ]] && eval "$(/opt/homebrew/bin/mise activate zsh)"
 
 # p10k configuration
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
