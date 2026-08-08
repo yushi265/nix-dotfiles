@@ -225,6 +225,14 @@ gd() {
     done
 }
 
+# gds: git diff を左右分割 (side-by-side) で表示する
+# gitconfig 側で side-by-side を有効にすると lazygit の狭いペインでも
+# 強制され、折り返しで読みにくくなる。delta はコマンドライン指定が
+# 最優先なので、広い画面で見たいときだけここで明示する。
+gds() {
+    git diff --color=always "$@" | delta --side-by-side --paging=always
+}
+
 # rgf: interactive ripgrep with fzf
 rgf() {
     local initial_query="${*:-}"

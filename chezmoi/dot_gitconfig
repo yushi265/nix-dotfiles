@@ -12,9 +12,10 @@
 	navigate = true
 	light = false
 	line-numbers = true
-	# 変更前後を左右に並べる。lazygit のように幅が狭い環境では
-	# pager 側で --side-by-side=false を渡して個別に無効化できる。
-	side-by-side = true
+	# side-by-side はここで有効にしないこと。[delta] セクションの直接指定は
+	# features や環境変数より優先度が高く、delta は GIT_CONFIG_GLOBAL も
+	# 無視するため、lazygit のような狭いペインだけ無効化する手段がなくなる。
+	# 左右分割で見たいときは zsh の gds 関数を使う (--side-by-side を明示)。
 	# herdr / nvim と系統を揃える
 	syntax-theme = Catppuccin Mocha
 	hunk-header-decoration-style = cyan box
