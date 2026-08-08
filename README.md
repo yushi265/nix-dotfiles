@@ -9,10 +9,13 @@ nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) の
 ├── nix/                          # nix-darwin + home-manager
 │   ├── flake.nix                 # Flake エントリポイント
 │   ├── flake.lock
-│   ├── hosts/common.nix          # パッケージ / Zsh / Homebrew / macOS 設定
+│   ├── hosts/common.nix          # パッケージ / Homebrew / macOS 設定
 │   └── home.nix                  # home-manager (最小構成)
 ├── chezmoi/                      # dotfiles (chezmoi 管理)
 │   ├── .chezmoi.toml.tmpl        # machineType 自動判定 + sourceDir
+│   ├── .chezmoiignore            # 自動生成ファイルを追跡から除外
+│   ├── dot_zshrc.tmpl            # zsh 設定一式 (プラグイン/エイリアス/関数)
+│   ├── dot_zprofile              # brew shellenv
 │   ├── dot_gitconfig
 │   ├── dot_p10k.zsh, dot_tmux.conf, dot_vimrc, dot_npmrc
 │   ├── private_dot_aws/          # ~/.aws/config (machineType template)
@@ -30,9 +33,13 @@ nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) の
 
 | 管轄 | 担当 |
 |---|---|
-| **nix-darwin** (`nix/hosts/common.nix`) | CLI パッケージ / Homebrew casks / Zsh 設定 / macOS defaults |
-| **home-manager** (`nix/home.nix`) | stateVersion / sessionPath (最小) |
-| **chezmoi** (`chezmoi/`) | dotfiles 一式 (git / nvim / ghostty / aws / claude 等) |
+| **nix-darwin** (`nix/hosts/common.nix`) | CLI パッケージ / Homebrew casks+brews / macOS defaults |
+| **home-manager** (`nix/home.nix`) | stateVersion のみ (最小) |
+| **chezmoi** (`chezmoi/`) | dotfiles 一式 (zsh / git / nvim / ghostty / herdr / claude 等) |
+
+Zsh 設定は `chezmoi/dot_zshrc.tmpl` に集約している。nix はプラグイン本体を
+`environment.systemPackages` で提供するだけで、`~/.zshrc` から
+`/run/current-system/sw/share/` 配下の安定パスを source する。
 
 machineType は hostname から自動判定: `MacBook-Pro` / `mbp-m1` → `personal`、それ以外 → `work`
 
@@ -56,16 +63,19 @@ chezmoi apply
 ## 日常操作
 
 ```bash
-# システム設定を変更・適用 (パッケージ追加、Zsh 設定等)
+# システム設定を変更・適用 (パッケージ追加、macOS defaults 等)
 rebuild                        # = sudo darwin-rebuild switch --flake ~/.dotfiles/nix#...
 
-# dotfiles を変更・適用
+# dotfiles を変更・適用 (zsh 設定もこちら。rebuild 不要)
 moi diff                       # = chezmoi diff
 moi apply                      # = chezmoi apply
 
 # flake.lock を更新
-cd ~/.dotfiles && nix flake update
+cd ~/.dotfiles/nix && nix flake update
 rebuild
+
+# mise だけ更新 (nixpkgs は追随が 1-2 週間遅れるため Homebrew 管理)
+brew upgrade mise
 ```
 
 ## パッケージ追加
