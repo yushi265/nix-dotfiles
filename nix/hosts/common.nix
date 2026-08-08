@@ -7,7 +7,7 @@
   # Using Determinate Systems installer, so let it manage Nix
   nix.enable = false;
 
-  # Allow unfree packages (VSCode, etc.)
+  # Allow unfree packages (ssm-session-manager-plugin 等)
   nixpkgs.config.allowUnfree = true;
 
   # zsh の設定を chezmoi (~/.zshrc) 側から source するため、nix store の
@@ -106,7 +106,6 @@
       "1password"
       "slack"
       "tailscale-app"
-      "visual-studio-code"
       "zed"
     ];
   };
