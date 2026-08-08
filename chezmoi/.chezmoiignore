@@ -8,3 +8,8 @@
 # .config/zed/settings.json  : GUI 操作 (パネル配置等) で随時上書きされる
 .codex/config.toml
 .config/zed/settings.json
+
+# herdr は config.toml だけ管理する。同じディレクトリにログ・セッション状態・
+# ソケットが同居しているため、ディレクトリごと追加すると実行時データが混ざる。
+.config/herdr/*
+!.config/herdr/config.toml
