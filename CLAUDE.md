@@ -121,6 +121,9 @@ karabiner-elements, obsidian, raycast, cmux, scroll-reverser, slack, tailscale-a
   ハッシュ行がただのコメント文字列になって再実行が一切効かなくなる
 - Claude のスキルは `~/.claude/skills/` が正 (Claude Code が読むのはこちら)。
   `~/.claude/agent/skills/` は同内容の重複コピーで管理外
+- `private_dot_claude/skills/herdr/SKILL.md` は herdr バイナリ同梱版の写し。
+  herdr を更新したら `herdr --skill > chezmoi/private_dot_claude/skills/herdr/SKILL.md`
+  で再生成すること (自動追従はしない)
 
 ### 意図的に追跡しないもの
 
