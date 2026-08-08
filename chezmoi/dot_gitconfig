@@ -12,7 +12,12 @@
 	navigate = true
 	light = false
 	line-numbers = true
-	syntax-theme = Monokai Extended
+	# 変更前後を左右に並べる。lazygit のように幅が狭い環境では
+	# pager 側で --side-by-side=false を渡して個別に無効化できる。
+	side-by-side = true
+	# herdr / nvim と系統を揃える
+	syntax-theme = Catppuccin Mocha
+	hunk-header-decoration-style = cyan box
 
 [merge]
 	conflictstyle = diff3

@@ -1,4 +1,13 @@
+gui:
+  # diff ペインを左右分割にして横幅を稼ぐ。
+  # delta の side-by-side (gitconfig 側で有効) が窮屈にならないようにする。
+  mainPanelSplitMode: vertical
+  # 左のファイル一覧を狭くして diff 側に幅を回す (既定 0.3333)
+  sidePanelWidth: 0.2
+
 git:
   paging:
     colorArg: always
+    # delta の詳細設定 (side-by-side / line-numbers / syntax-theme) は
+    # ~/.gitconfig の [delta] セクションを参照する。
     pager: delta --dark --paging=never
