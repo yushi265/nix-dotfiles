@@ -17,7 +17,8 @@
 # gh の認証トークン (oauth_token) を含むため追跡しない。config.yml のみ管理する。
 .config/gh/hosts.yml
 
-# .claude/skills/ は手書きの実体ディレクトリだけを管理する。
+# .claude/skills/ は ~/.agents/skills/ に実体を置くスキルへの symlink (symlink_*)
+# だけを管理する。実体を .claude/skills/ 直下に置かないこと (dot_agents/ が正)。
 #
 # grill-me は mattpocock/skills から自動インストールされる
 # (~/.agents/.skill-lock.json が管理)。追跡すると更新と衝突する。

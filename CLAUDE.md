@@ -40,11 +40,12 @@ darwin-rebuild --rollback
     home.nix               # home-manager (最小)
   chezmoi/
     .chezmoi.toml.tmpl     # machineType 自動判定 + sourceDir
+    dot_agents/            # ~/.agents/skills (エージェント横断のスキル実体)
     dot_gitconfig          # ~/.gitconfig
     dot_p10k.zsh           # ~/.p10k.zsh
     dot_tmux.conf, dot_vimrc, dot_npmrc
     private_dot_aws/       # ~/.aws/config (machineType template)
-    private_dot_claude/    # ~/.claude/{CLAUDE.md,settings.json,rules,skills}
+    private_dot_claude/    # ~/.claude/{CLAUDE.md,settings.json,rules,skills(symlink)}
     private_dot_codex/     # ~/.codex/{AGENTS.md,keybindings.json}
     private_dot_config/    # ~/.config/{ghostty,nvim,yazi,zellij,mise,lazygit,git,gh,herdr,
                            #            karabiner,ccstatusline}
@@ -119,10 +120,14 @@ karabiner-elements, obsidian, raycast, cmux, scroll-reverser, slack, tailscale-a
 - **`run_onchange_*` で `{{ include ... | sha256sum }}` を使うならファイル名を
   `.tmpl` で終わらせること。** サフィックスがないとテンプレート展開されず、
   ハッシュ行がただのコメント文字列になって再実行が一切効かなくなる
-- Claude のスキルは `~/.claude/skills/` が正 (Claude Code が読むのはこちら)。
-  `~/.claude/agent/skills/` は同内容の重複コピーで管理外
-- `private_dot_claude/skills/herdr/SKILL.md` は herdr バイナリ同梱版の写し。
-  herdr を更新したら `herdr --skill > chezmoi/private_dot_claude/skills/herdr/SKILL.md`
+- **chezmoi 管理のスキルは実体を `dot_agents/skills/<name>/` (→ `~/.agents/skills/`) に
+  置き、`~/.claude/skills/<name>` へは `private_dot_claude/skills/symlink_<name>.tmpl`
+  (中身は `{{ .chezmoi.homeDir }}/.agents/skills/<name>`) で symlink を張る。**
+  `.claude/skills/` 直下に実体を置かないこと。Claude Code が読むのは
+  `~/.claude/skills/` (symlink 経由で実体に到達する)
+- `~/.claude/agent/skills/` は同内容の重複コピーで管理外
+- `dot_agents/skills/herdr/SKILL.md` は herdr バイナリ同梱版の写し。
+  herdr を更新したら `herdr --skill > chezmoi/dot_agents/skills/herdr/SKILL.md`
   で再生成すること (自動追従はしない)
 
 ### 意図的に追跡しないもの

@@ -8,7 +8,7 @@
 #
 # なお、このファイルは .tmpl サフィックスがないとテンプレート展開されず、
 # 下の式がただのコメント文字列になって再実行が一切効かなくなる。
-# {{ glob (joinPath .chezmoi.sourceDir "private_dot_claude/skills/*/SKILL.md") | join "," | sha256sum }}
+# {{ glob (joinPath .chezmoi.sourceDir "dot_agents/skills/*/SKILL.md") | join "," | sha256sum }}
 set -euo pipefail
 
 CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
