@@ -1,0 +1,33 @@
+#!/bin/bash
+# Cloudflare MCP servers を Codex の揮発的な config.toml に登録する。
+#
+# .codex/config.toml はアプリ状態も含むため chezmoi では丸ごと管理しない。
+# 代わりに、このスクリプトで Cloudflare MCP の不足分だけを追記する。
+# {{ "cloudflare-mcp-v1" | sha256sum }}
+set -euo pipefail
+
+CONFIG_FILE="$HOME/.codex/config.toml"
+
+mkdir -p "$(dirname "$CONFIG_FILE")"
+touch "$CONFIG_FILE"
+
+ensure_mcp_server() {
+  local name="$1"
+  local url="$2"
+
+  if grep -Fq "[mcp_servers.$name]" "$CONFIG_FILE"; then
+    return
+  fi
+
+  {
+    printf '\n'
+    printf '[mcp_servers.%s]\n' "$name"
+    printf 'url = "%s"\n' "$url"
+  } >> "$CONFIG_FILE"
+}
+
+ensure_mcp_server "cloudflare" "https://mcp.cloudflare.com/mcp"
+ensure_mcp_server "cloudflare-docs" "https://docs.mcp.cloudflare.com/mcp"
+ensure_mcp_server "cloudflare-bindings" "https://bindings.mcp.cloudflare.com/mcp"
+ensure_mcp_server "cloudflare-builds" "https://builds.mcp.cloudflare.com/mcp"
+ensure_mcp_server "cloudflare-observability" "https://observability.mcp.cloudflare.com/mcp"
