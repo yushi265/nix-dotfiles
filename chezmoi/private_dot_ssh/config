@@ -27,7 +27,7 @@ Host twitter
 # personal
 Host m1
   User shina
-  HostName mbp-m1
+  HostName mbp-m1.local
   IdentityFile ~/.ssh/id_ed25519
   TCPKeepAlive yes
   IdentitiesOnly yes
