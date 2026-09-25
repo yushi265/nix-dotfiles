@@ -1,0 +1,5 @@
+# Retired Fable 5 files from the former shared-skill layout.
+.agents/skills/fable5
+.claude/skills/fable5
+.codex/skills/fable5
+.claude/rules/fable5-protocol.md

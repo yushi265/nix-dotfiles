@@ -65,8 +65,8 @@ printf '%s\n' "$HERDR_WORKSPACE_ID" "$HERDR_TAB_ID" "$HERDR_PANE_ID"
 
 引数からモデル指定を抽出する。次のいずれの書き方も受け付ける:
 
-- `--model fable` / `--model claude-fable-5` のようなフラグ形式
-- 「fable で」「sonnet に聞いて」「opus で壁打ち」のような自然文
+- `--model opus` / `--model sonnet` のようなフラグ形式
+- 「sonnet に聞いて」「opus で壁打ち」のような自然文
 
 抽出した種別・モデル指定は**議題から取り除く**（相手に渡すプロンプトに混ぜない）。
 モデル指定がなければモデルフラグを付けずに起動し、相手はその CLI の既定モデルで動く。
@@ -75,7 +75,7 @@ printf '%s\n' "$HERDR_WORKSPACE_ID" "$HERDR_TAB_ID" "$HERDR_PANE_ID"
 
 | kind | フラグ | 受け付ける値 |
 | --- | --- | --- |
-| `claude` | `--model` | エイリアス（`fable` / `opus` / `sonnet` / `haiku`）またはフルネーム（`claude-fable-5` 等） |
+| `claude` | `--model` | エイリアス（`opus` / `sonnet` / `haiku`）または対応するフルネーム |
 | `codex` | `-m` (`--model`) | codex 側のモデル名 |
 
 ユーザーが書いた表記をそのまま渡し、勝手に別のモデルへ読み替えない。
@@ -213,7 +213,7 @@ herdr pane read <pane_id> --source visible --lines 40
 herdr agent read <pane_id> --source visible --lines 10
 ```
 
-多くの CLI はステータス行にモデル表示を出す（Claude Code なら例: `Fable 5`）。
+多くの CLI はステータス行にモデル表示を出す。
 指定したエイリアスと表示名は綴りが一致しないので、**同じモデル系列を指しているか**で判断する。
 表示位置や有無は CLI ごとに違うので、出ていないこと自体は異常ではない。
 

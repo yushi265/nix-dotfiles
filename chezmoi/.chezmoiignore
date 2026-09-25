@@ -19,10 +19,6 @@
 
 # .claude/skills/ は ~/.agents/skills/ に実体を置くスキルへの symlink (symlink_*)
 # だけを管理する。実体を .claude/skills/ 直下に置かないこと (dot_agents/ が正)。
-#
-# grill-me は mattpocock/skills から自動インストールされる
-# (~/.agents/.skill-lock.json が管理)。追跡すると更新と衝突する。
-.claude/skills/grill-me
 
 # 空ディレクトリ
 .claude/skills/learned

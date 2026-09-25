@@ -1,11 +1,8 @@
 ---
 name: task-log
-description: >
-  This skill should be used when the user asks to
-  "タスクログを記録して", "タスク履歴を記録", "task-log", "ログを記録して",
-  "セッション履歴を書き出して", "作業履歴を記録", "task log", "ログ更新して".
-  Records Claude Code task execution history as structured markdown files.
-version: 0.2.0
+description: Claude Codeの保存済みセッションをMarkdownログとして記録・閲覧する。Codexの現在の会話の保存には使わない。
+metadata:
+  version: "0.2.1"
 ---
 
 # Task Log Skill
@@ -16,6 +13,8 @@ Claude Code でのタスク実行履歴を **セッション単位のマーク�
 SessionStart hook による自動記録が主役。手動呼び出しは閲覧・バックアップ用。
 
 ファイル構成: `~/.claude/task-logs/<project>/YYYY-MM-DD/HH-MM_<session-id>.md`
+
+このスクリプトはClaude Codeの履歴専用。CodexからClaudeの履歴を扱う依頼には使えるが、Codex自身の会話を記録したと報告しない。現在の会話の要約保存は `note` スキルが利用可能ならそちらを使う。
 
 ## ステップ1: 引数解析
 
@@ -42,42 +41,42 @@ pwd
 ### 通常実行（引数なし） — バックアップ手動記録
 
 ```bash
-python3 ~/.claude/skills/task-log/scripts/generate_log.py \
+python3 ~/.agents/skills/task-log/scripts/generate_log.py \
   --project-path "$(pwd)"
 ```
 
 ### --dry-run
 
 ```bash
-python3 ~/.claude/skills/task-log/scripts/generate_log.py \
+python3 ~/.agents/skills/task-log/scripts/generate_log.py \
   --project-path "$(pwd)" --dry-run
 ```
 
 ### --show（引数なし = 直近7日）
 
 ```bash
-python3 ~/.claude/skills/task-log/scripts/generate_log.py \
+python3 ~/.agents/skills/task-log/scripts/generate_log.py \
   --project-path "$(pwd)" --show
 ```
 
 ### --show YYYY-MM-DD / YYYY-MM
 
 ```bash
-python3 ~/.claude/skills/task-log/scripts/generate_log.py \
+python3 ~/.agents/skills/task-log/scripts/generate_log.py \
   --project-path "$(pwd)" --show "YYYY-MM-DD"
 ```
 
 ### --show セッションID
 
 ```bash
-python3 ~/.claude/skills/task-log/scripts/generate_log.py \
+python3 ~/.agents/skills/task-log/scripts/generate_log.py \
   --project-path "$(pwd)" --show "セッションID（先頭8文字以上）"
 ```
 
 ### --all
 
 ```bash
-python3 ~/.claude/skills/task-log/scripts/generate_log.py --all
+python3 ~/.agents/skills/task-log/scripts/generate_log.py --all
 ```
 
 ## ステップ4: 結果の解釈と報告
@@ -125,11 +124,11 @@ python3 ~/.claude/skills/task-log/scripts/generate_log.py --all
 - 新しく記録したセッション数（`new_entries`）
 - ログファイルパス（`log_files`）
 - 記録したタスク一覧（`entries_preview`）
-- 「次回からは SessionStart hook が自動記録します」とコメント
+- 自動記録については、hookの設定が確認できた場合だけ案内する
 
 ### 新しいセッションなし時
 
-「新しいセッションはありません（SessionStart hook が自動記録済みです）」とシンプルに報告する。
+「新しいセッションはありません」とシンプルに報告する。
 
 ### --show 時
 

@@ -1,40 +1,21 @@
 #!/bin/bash
-# ~/.claude/skills/* を ~/.codex/skills/ にミラーする。
-#
-# skill の増減で再実行される。ディレクトリは include できないため
-# SKILL.md のパス一覧をハッシュしている (symlink の張り直しに必要なのは
-# 増減の検知だけで、SKILL.md の内容変更は追わなくてよい)。
-# 内容変更を検知させたい場合はこの行の式を include の羅列に変えること。
-#
-# なお、このファイルは .tmpl サフィックスがないとテンプレート展開されず、
-# 下の式がただのコメント文字列になって再実行が一切効かなくなる。
+# Codex は ~/.agents/skills を直接読むため、旧Claude経由のミラーだけ整理する。
+# ファイル名は既存環境の run_onchange 移行として維持する。リンクは新規作成しない。
 # {{ glob (joinPath .chezmoi.sourceDir "dot_agents/skills/*/SKILL.md") | join "," | sha256sum }}
 set -euo pipefail
 
-CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
-CODEX_SKILLS_DIR="$HOME/.codex/skills"
+# chezmoi の展開先を使う。一時ディレクトリを --destination に指定して検証可能。
+migration_root={{ .chezmoi.destDir | quote }}
 
-mkdir -p "$CLAUDE_SKILLS_DIR" "$CODEX_SKILLS_DIR"
-
-# 古い codex symlink のうち、claude skills に存在しないものを削除
-for codex_entry in "$CODEX_SKILLS_DIR"/*; do
-  [ ! -L "$codex_entry" ] && continue
-  skill_name="$(basename "$codex_entry")"
-  [ "$skill_name" = ".system" ] && continue
-  target="$(readlink "$codex_entry")"
-  case "$target" in
-    "$CLAUDE_SKILLS_DIR"/*)
-      [ ! -f "$target/SKILL.md" ] && rm -f "$codex_entry"
-      ;;
-  esac
-done
-
-# 各 claude skill に対して codex 側の symlink を作成
-for claude_skill in "$CLAUDE_SKILLS_DIR"/*; do
-  [ ! -d "$claude_skill" ] || [ ! -f "$claude_skill/SKILL.md" ] && continue
-  skill_name="$(basename "$claude_skill")"
-  codex_link="$CODEX_SKILLS_DIR/$skill_name"
-  [ -L "$codex_link" ] && [ "$(readlink "$codex_link")" = "$claude_skill" ] && continue
-  [ -e "$codex_link" ] && [ ! -L "$codex_link" ] && continue
-  ln -sfn "$claude_skill" "$codex_link"
-done
+{{ range glob (joinPath .chezmoi.sourceDir "dot_agents/skills/*/SKILL.md") -}}
+skill_name={{ base (dir .) | quote }}
+canonical="$migration_root/.agents/skills/$skill_name"
+legacy="$migration_root/.claude/skills/$skill_name"
+mirror="$migration_root/.codex/skills/$skill_name"
+# 同じ実体に到達する既知の旧ミラーだけ削除する。
+# 実ディレクトリ、別のリンク先、管理外スキル、展開未完了のスキルは保持する。
+if [ -L "$mirror" ] && [ "$(readlink "$mirror")" = "$legacy" ] &&
+   [ -f "$canonical/SKILL.md" ] && [ "$legacy" -ef "$canonical" ]; then
+  rm -- "$mirror"
+fi
+{{ end -}}

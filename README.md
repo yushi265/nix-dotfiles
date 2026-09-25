@@ -20,10 +20,11 @@ nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) の
 │   ├── dot_p10k.zsh, dot_tmux.conf, dot_vimrc, dot_npmrc
 │   ├── private_dot_aws/          # ~/.aws/config (machineType template)
 │   ├── private_dot_claude/       # ~/.claude/ (CLAUDE.md / settings.json / rules / skills)
+│   ├── dot_agents/               # ~/.agents/skills/ (共有スキルの実体)
 │   ├── private_dot_codex/        # ~/.codex/ (AGENTS.md / keybindings.json)
 │   ├── private_dot_config/       # ~/.config/{ghostty,nvim,yazi,zellij,mise,lazygit,git,gh,...}
 │   ├── private_dot_ssh/          # ~/.ssh/config
-│   └── run_*                     # obsidian / mise / codex skills
+│   └── run_*                     # obsidian / mise / 旧Codexスキルリンクの移行
 ├── README.md
 ├── CLAUDE.md
 └── AGENTS.md
@@ -91,3 +92,25 @@ rebuild
 ```bash
 sudo darwin-rebuild --rollback
 ```
+
+## Codexの設定管理
+
+- このリポジトリの作業指示は `AGENTS.md`、全プロジェクト共通の個人設定は `chezmoi/private_dot_codex/AGENTS.md` で管理する。
+- スキルの実体は `chezmoi/dot_agents/skills/<name>/` に置く。Codexは展開先の `~/.agents/skills/` を直接読み、Claude Codeは `~/.claude/skills/` のリンク経由で読む。
+- `run_onchange_after_03-codex-skills-symlink.sh.tmpl` は旧構成からの移行用。将来のapply時に、管理対象かつ同じ実体へ到達する `~/.codex/skills/` → `~/.claude/skills/` の旧リンクだけを削除する。実体、独自リンク、管理外スキル、`.system` は保持する。廃止した `fable5` の実体と旧リンク・ルールは `.chezmoiremove` で削除する。
+- `~/.codex/config.toml`、認証情報、履歴、プラグインキャッシュは管理しない。モデルや権限設定はこの変更の対象外。
+- プラグインとローカルに類似スキルがある場合は、使う配布元を選ぶ。プラグイン側の削除・無効化はこのリポジトリの移行処理では行わない。
+
+適用せずに確認するには、リポジトリのルートで以下を実行する。
+
+```bash
+git diff --check
+chezmoi --source "$PWD/chezmoi" cat "$HOME/.codex/AGENTS.md"
+python3 -B -m unittest discover -s tests -p 'test_codex_skills_migration.py' -v
+darwin-rebuild build --flake "$PWD/nix#personal"
+```
+
+移行テストは一時ディレクトリでスクリプトと削除指定を検証し、実ホームにはapplyしない。
+共有スキルの変更は、適用後にはClaude Codeにも反映される。
+
+仕様の参照先: [AGENTS.mdの読み込み](https://learn.chatgpt.com/docs/agent-configuration/agents-md)、[スキルの配置と検出](https://learn.chatgpt.com/docs/build-skills)。
