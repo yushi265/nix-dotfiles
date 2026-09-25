@@ -5,9 +5,10 @@ description: >
   "セッションをノートにして", "このセッションをまとめて", "セッション要約を作って",
   "セッションをObsidianに保存して", "今のセッションをノート化して", "session note",
   "作業内容をノートにまとめて".
-  Summarizes the current Claude Code session's conversation and saves it as a
+  Summarizes the current conversation (Codex or Claude Code) and saves it as a
   new note in the Obsidian vault's 20_Notes folder.
-version: 0.1.0
+metadata:
+  version: "0.1.1"
 ---
 
 # Note Skill
@@ -16,7 +17,7 @@ version: 0.1.0
 
 このスキルは、**今の会話セッションの内容を振り返って要約し**、Obsidian vaultの `20_Notes/` に新規ノートとして保存する。
 
-このマシンには `logging-tool` プラグインが別途動いており、セッションの生ログ全文を自動的に `80_ClaudeSessions/<project>/` に書き出している（フルトランスクリプト、自動・バックグラウンド）。それに対してこのスキルは、**ユーザーが明示的に呼んだときだけ**、あとで読み返して要点がすぐわかる「まとめノート」を作ることが目的。生ログの方には一切手を触れない。
+ユーザーに依頼された会話を要約する。別ツールの自動ログやhookが存在するとは仮定しない。参照できない会話は補完せず、要約できた範囲を明示する。
 
 Vaultのパス: `/Users/shina/src/github.com/yushi265/digital-garden`（GHQ管理下）。パスが見つからない・vault構造が変わっている場合は憶測で進めずユーザーに確認する。
 
@@ -54,7 +55,7 @@ Vaultのパス: `/Users/shina/src/github.com/yushi265/digital-garden`（GHQ管�
 内容を一言で表す簡潔な日本語タイトルを決める（例:「session-noteスキルの作成」）。
 
 ```
-!`ls 20_Notes/*.md 2>/dev/null`
+rg --files /Users/shina/src/github.com/yushi265/digital-garden/20_Notes -g '*.md'
 ```
 
 既存ファイルと同名になる場合は、末尾に日付を付けるなどして重複を避ける。
@@ -98,10 +99,10 @@ updated: YYYY-MM-DDTHH:mm
 - 🏷 タグ: tech
 ```
 
-vaultは obsidian-git が自動コミットするため、追加のgit操作は不要である旨も添える。
+保存の依頼だけで追加のGit操作は行わない。
 
 ## 注意事項
 
 - 生ログ全文（`80_ClaudeSessions/`）には触れない・重複転記しない。あくまで要約に徹する
-- 確定していない解釈（タイトル案・タグ判定に迷うケース）は憶測で進めず、簡潔にユーザーへ確認する
+- タイトルやタグは会話の内容に即して選ぶ。保存先や要約対象が不明な場合は確認する
 - 既存の日本語表記・Obsidian記法（フロントマター形式など）を壊さない

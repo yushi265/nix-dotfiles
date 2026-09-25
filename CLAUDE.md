@@ -126,15 +126,17 @@ karabiner-elements, obsidian, raycast, cmux, scroll-reverser, slack, tailscale-a
   `.claude/skills/` 直下に実体を置かないこと。Claude Code が読むのは
   `~/.claude/skills/` (symlink 経由で実体に到達する)
 - `~/.claude/agent/skills/` は同内容の重複コピーで管理外
+- **`~/.agents/.skill-lock.json` (skills CLI) 経由で入れたスキルも chezmoi で追跡する。**
+  cloudflare/skills・mattpocock/skills 等から入れた実体を `dot_agents/skills/` に
+  コピーして管理下に置く。skills CLI で更新したら差分を取り込み直すこと
 - `dot_agents/skills/herdr/SKILL.md` は herdr バイナリ同梱版の写し。
   herdr を更新したら `herdr --skill > chezmoi/dot_agents/skills/herdr/SKILL.md`
   で再生成すること (自動追従はしない)
 
 ### 意図的に追跡しないもの
 
-`chezmoi/.chezmoiignore` に理由付きで記載。大別すると3種類:
+`chezmoi/.chezmoiignore` に理由付きで記載。大別すると2種類:
 
 1. **認証情報を含む** — `.config/gh/hosts.yml` / `.config/raycast/config.json`
 2. **ツール側が上書きする** — herdr の hook スクリプト (`managed by herdr` と明記)、
    `.config/zed/settings.json` や codexbar など GUI 操作で書き換わるもの
-3. **別リポジトリ・外部が正** — `grill-me` (`~/.agents/.skill-lock.json` 管理)
