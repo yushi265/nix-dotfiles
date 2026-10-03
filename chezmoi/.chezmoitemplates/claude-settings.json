@@ -1,0 +1,100 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_NO_FLICKER": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git branch *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git stash *)",
+      "Bash(git rev-parse *)",
+      "Bash(git symbolic-ref *)",
+      "Bash(git checkout *)",
+      "Bash(gh repo view *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr diff *)",
+      "Bash(python3 ~/.claude/skills/task-log/scripts/generate_log.py*)"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(gh pr comment *)",
+      "Bash(gh pr create *)"
+    ],
+    "defaultMode": "auto"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/skills/task-log/scripts/generate_log.py --auto 2>/dev/null || true"
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '{{ .chezmoi.homeDir }}/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0,
+    "refreshInterval": 10
+  },
+  "enabledPlugins": {
+    "claude-mem@thedotmack": true,
+    "claude-security@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "codex@openai-codex": true,
+    "everything-claude-code@everything-claude-code": true,
+    "gopls-lsp@claude-plugins-official": true,
+    "logging-tool@logging-tool": true,
+    "notion@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "logging-tool": {
+      "source": {
+        "source": "directory",
+        "path": "{{ .chezmoi.homeDir }}/src/github.com/yushi265/logging-tool"
+      }
+    },
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      },
+      "autoUpdate": true
+    },
+    "thedotmack": {
+      "source": {
+        "source": "github",
+        "repo": "thedotmack/claude-mem"
+      },
+      "autoUpdate": true
+    }
+  },
+  "pluginConfigs": {
+    "logging-tool@logging-tool": {
+      "options": {
+        "log_dir": "{{ .chezmoi.homeDir }}/src/github.com/yushi265/digital-garden/80_ClaudeSessions"
+      }
+    }
+  }
+}

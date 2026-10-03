@@ -1,0 +1,19 @@
+#!/bin/bash
+# ~/.claude/settings.json を部分管理する (chezmoi の modify スクリプト)。
+#
+# Claude Code は language / modelSettings / autoMode / effortLevel などを
+# 自分で書き換える。ファイルを丸ごと管理すると永久に diff が出て、
+# 別マシンの値で上書きする事故になるため、共有したいトップレベルキーだけを
+# .chezmoitemplates/claude-settings.json の内容で置き換える。
+# そこに無いキーは、そのマシンの現在の値をそのまま残す。
+set -euo pipefail
+
+current="$(cat)"
+[ -n "$current" ] || current='{}'
+
+managed="$(cat <<'CHEZMOI_MANAGED_JSON'
+{{ template "claude-settings.json" . }}
+CHEZMOI_MANAGED_JSON
+)"
+
+jq --argjson managed "$managed" '. + $managed' <<<"$current"
