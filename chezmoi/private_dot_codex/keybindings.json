@@ -1,6 +1,10 @@
 [
   {
     "command": "globalDictationHold",
-    "key": "RightOption"
+    "key": null
+  },
+  {
+    "command": "openAvatarOverlay",
+    "key": null
   }
 ]
