@@ -28,7 +28,7 @@ nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) の
 │   ├── private_dot_ssh/          # ~/.ssh/config
 │   └── run_*                     # obsidian / mise / 旧Codexスキルリンクの移行
 ├── README.md
-├── CLAUDE.md
+├── CLAUDE.md                     # @AGENTS.md だけ (Claude Code 用の入口)
 └── AGENTS.md
 ```
 
@@ -45,7 +45,7 @@ Zsh 設定は `chezmoi/dot_zshrc.tmpl` に集約している。nix はプラグ�
 `/run/current-system/sw/share/` 配下の安定パスを source する。
 
 マシンごとの違いは `chezmoi/.chezmoidata.yaml` に集約している (機能ごとに入れるホスト名を並べる)。
-`~/.claude/settings.json` は共有するキーだけを chezmoi が置き換える部分管理。詳細は `CLAUDE.md` を参照。
+`~/.claude/settings.json` は共有するキーだけを chezmoi が置き換える部分管理。詳細は `chezmoi/README.md` を参照。
 nix 側の `machineType` は hostname から自動判定: `MacBook-Pro` / `mbp-m1` → `personal`、それ以外 → `work`
 
 ## 新マシンセットアップ
