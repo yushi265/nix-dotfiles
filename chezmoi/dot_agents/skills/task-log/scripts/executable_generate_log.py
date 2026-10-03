@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-generate_log.py - Claude Code タスク実行履歴ログ生成スクリプト v2
+generate_log.py - Claude Code / Codex タスク実行履歴ログ生成スクリプト
 
 セッション単位のファイルを生成。詳細な会話フロー・実行コマンド・モデル情報を含む。
-~/.claude/history.jsonl と ~/.claude/projects/<encoded>/<session>.jsonl を使用。
+Claude の履歴形式は既存のまま扱い、Codex の JSONL は codex_log.py で読み取る。
 """
 
 import json
@@ -331,6 +331,8 @@ def build_session_file(session_id, entries, session_data, project_path):
             rel_files.append(rel)
     rel_files = sorted(set(rel_files))
     files_section = "\n".join(f"- `{f}`" for f in rel_files) if rel_files else "なし"
+    if session_data.get("files_modified_known") is False:
+        files_section = "未集計（ツール呼び出しだけでは変更の成功を断定しません）"
 
     # 会話フロー
     conversation = session_data.get("conversation", [])
@@ -618,7 +620,11 @@ def process_all_projects(dry_run=False, auto=False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Claude Code タスクログ生成 v2")
+    parser = argparse.ArgumentParser(description="Claude Code / Codex タスクログ生成")
+    parser.add_argument("--source", choices=("claude", "codex"), default="claude",
+                        help="履歴の種類（既存 hook との互換性のため省略時は claude）")
+    parser.add_argument("--data-dir", help="履歴を読むディレクトリ（省略時は選択したクライアントの設定ディレクトリ）")
+    parser.add_argument("--log-dir", help="ログ出力のルートディレクトリ（プロジェクト別に保存）")
     parser.add_argument("--project-path", help="対象プロジェクトのパス")
     parser.add_argument("--all", action="store_true", help="全プロジェクト処理")
     parser.add_argument("--dry-run", action="store_true", help="プレビューのみ（書き込みなし）")
@@ -628,6 +634,25 @@ def main():
                         help="hook用サイレントモード（現在のpwdのプロジェクトを処理、stdout無出力）")
 
     args = parser.parse_args()
+
+    if args.source == "codex":
+        from codex_log import run
+        try:
+            result = run(args, sys.modules[__name__])
+        except (OSError, ValueError) as exc:
+            result = {"status": "error", "message": str(exc)}
+        if not args.auto:
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 1 if result.get("status") == "error" else 0
+
+    # 既存の無引数・--auto 呼び出しは Claude の保存先を維持する。
+    # 明示的なパス指定はテストや別マシンからの履歴インポートにも使う。
+    global HISTORY_FILE, PROJECTS_DIR, TASK_LOGS_DIR
+    if args.data_dir:
+        HISTORY_FILE = os.path.join(args.data_dir, "history.jsonl")
+        PROJECTS_DIR = os.path.join(args.data_dir, "projects")
+    if args.log_dir:
+        TASK_LOGS_DIR = args.log_dir
 
     # --auto モード（SessionStart hook用）
     if args.auto:
@@ -665,4 +690,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
