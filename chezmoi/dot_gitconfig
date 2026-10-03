@@ -2,6 +2,9 @@
 	name = yushi265
 	email = ae265.1108@gmail.com
 
+[init]
+	defaultBranch = main
+
 [core]
 	pager = delta
 
