@@ -23,7 +23,8 @@ nix-darwin + home-manager（システム管理）と chezmoi（dotfiles 管理�
 - chezmoi の展開確認: `chezmoi --source "$PWD/chezmoi" cat <展開先の絶対パス>`。テンプレートは `execute-template` で確認する。
 - シェルを変更したら構文チェックを行い、ファイル操作は一時ディレクトリでも検証する。
 - 構成ビルド: `darwin-rebuild build --flake "$PWD/nix#personal"`。実行できない場合は原因と未検証事項を報告する。
-- ホスト分岐を変える場合は `personal` / `mbp-m1` と hostname 由来の `machineType` への影響を示す。
+- ホスト分岐を変える場合は `MacBook-Pro` / `mbp-m1` 両方への影響を示す。chezmoi 側は `chezmoi/.chezmoidata.yaml`、nix 側は hostname 由来の `machineType` で分岐する。
+- ホームのパスはベタ書きせず `{{ .chezmoi.homeDir }}` を使う。`~/.claude/settings.json` は部分管理なので、共有設定は `chezmoi/.chezmoitemplates/claude-settings.json` を編集する。
 
 `chezmoi apply`（`moi apply`）、`darwin-rebuild switch`（`rebuild`）、`nix flake update` は検証とは別の操作。ユーザーが適用禁止を指定した場合は実行しない。適用が依頼されていない作業は編集と検証までに留める。
 

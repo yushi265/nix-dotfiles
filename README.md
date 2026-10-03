@@ -12,13 +12,15 @@ nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) の
 │   ├── hosts/common.nix          # パッケージ / Homebrew / macOS 設定
 │   └── home.nix                  # home-manager (最小構成)
 ├── chezmoi/                      # dotfiles (chezmoi 管理)
-│   ├── .chezmoi.toml.tmpl        # machineType 自動判定 + sourceDir
+│   ├── .chezmoi.toml.tmpl        # sourceDir (+ nix 互換の machineType)
+│   ├── .chezmoidata.yaml         # ホスト別の機能フラグ / nix 構成名
+│   ├── .chezmoitemplates/        # 共有テンプレート (claude-settings.json)
 │   ├── .chezmoiignore            # 自動生成ファイルを追跡から除外
 │   ├── dot_zshrc.tmpl            # zsh 設定一式 (プラグイン/エイリアス/関数)
 │   ├── dot_zprofile              # brew shellenv
 │   ├── dot_gitconfig
-│   ├── dot_p10k.zsh, dot_tmux.conf, dot_vimrc, dot_npmrc
-│   ├── private_dot_aws/          # ~/.aws/config (machineType template)
+│   ├── dot_p10k.zsh, dot_tmux.conf, dot_vimrc, dot_npmrc.tmpl
+│   ├── private_dot_aws/          # ~/.aws/config (features.aws のホストのみ展開)
 │   ├── private_dot_claude/       # ~/.claude/ (CLAUDE.md / settings.json / rules / skills)
 │   ├── dot_agents/               # ~/.agents/skills/ (共有スキルの実体)
 │   ├── private_dot_codex/        # ~/.codex/ (AGENTS.md / keybindings.json)
@@ -42,7 +44,9 @@ Zsh 設定は `chezmoi/dot_zshrc.tmpl` に集約している。nix はプラグ�
 `environment.systemPackages` で提供するだけで、`~/.zshrc` から
 `/run/current-system/sw/share/` 配下の安定パスを source する。
 
-machineType は hostname から自動判定: `MacBook-Pro` / `mbp-m1` → `personal`、それ以外 → `work`
+マシンごとの違いは `chezmoi/.chezmoidata.yaml` に集約している (機能ごとに入れるホスト名を並べる)。
+`~/.claude/settings.json` は共有するキーだけを chezmoi が置き換える部分管理。詳細は `CLAUDE.md` を参照。
+nix 側の `machineType` は hostname から自動判定: `MacBook-Pro` / `mbp-m1` → `personal`、それ以外 → `work`
 
 ## 新マシンセットアップ
 

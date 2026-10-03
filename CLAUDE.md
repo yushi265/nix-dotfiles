@@ -39,12 +39,14 @@ darwin-rebuild --rollback
     hosts/common.nix       # システム設定 + Zsh + パッケージ
     home.nix               # home-manager (最小)
   chezmoi/
-    .chezmoi.toml.tmpl     # machineType 自動判定 + sourceDir
+    .chezmoi.toml.tmpl     # sourceDir (+ nix 互換の machineType)
+    .chezmoidata.yaml      # ホスト別の機能フラグ / nix 構成名
+    .chezmoitemplates/     # 共有テンプレート (claude-settings.json)
     dot_agents/            # ~/.agents/skills (エージェント横断のスキル実体)
     dot_gitconfig          # ~/.gitconfig
     dot_p10k.zsh           # ~/.p10k.zsh
-    dot_tmux.conf, dot_vimrc, dot_npmrc
-    private_dot_aws/       # ~/.aws/config (machineType template)
+    dot_tmux.conf, dot_vimrc, dot_npmrc.tmpl
+    private_dot_aws/       # ~/.aws/config (features.aws のホストのみ展開)
     private_dot_claude/    # ~/.claude/{CLAUDE.md,settings.json,rules,skills(symlink)}
     private_dot_codex/     # ~/.codex/{AGENTS.md,keybindings.json}
     private_dot_config/    # ~/.config/{ghostty,nvim,yazi,zellij,mise,lazygit,git,gh,herdr,
@@ -56,11 +58,33 @@ darwin-rebuild --rollback
   AGENTS.md
 ```
 
-### machineType 判定
+### マシンごとの違いの管理
 
-`nix/flake.nix` と `chezmoi/.chezmoi.toml.tmpl` の両方でホスト名から自動判定:
-- hostname に "MacBook-Pro" を含む or "mbp-m1" → `personal`
-- それ以外 → `work`
+マシンは `MacBook-Pro` (user: shiina) と `mbp-m1` (user: shina) の2台。
+ユーザー名もホームのパスも違うので、次の3つのルールで吸収する。
+
+1. **ホスト別の違いは `chezmoi/.chezmoidata.yaml` に集約する。**
+   `features.<機能>` に「入れるホスト名」を並べ、テンプレートでは
+   `{{ if has .chezmoi.hostname .features.aws }}` で分岐する。
+   マシンや機能を足すときはこの表に書く。ファイル単位で要る/要らんを
+   分けたいときは `.chezmoiignore` (テンプレート) で同じ条件を使う。
+2. **ホームのパスをベタ書きしない。** `/Users/<name>/...` は
+   `{{ .chezmoi.homeDir }}/...` にしてファイルを `.tmpl` にする。
+3. **アプリが書き換えるファイルは丸ごと管理しない。**
+   `~/.claude/settings.json` は `private_dot_claude/modify_private_settings.json.tmpl`
+   が、`.chezmoitemplates/claude-settings.json` にあるトップレベルキー
+   (env / permissions / hooks / statusLine / enabledPlugins /
+   extraKnownMarketplaces / pluginConfigs) だけを置き換える。それ以外
+   (language / model / modelSettings / effortLevel / autoMode など) は
+   各マシンの値を残す。共有設定を変えるときはテンプレート側を編集する。
+
+**ホームの現状を丸ごと `chezmoi add` / コピーで取り込まないこと。**
+別マシンのパスやそのマシン専用の hook が混ざる (2026-10 に実際に起きた)。
+取り込むときは `chezmoi diff` を見てキー・行単位で入れる。
+
+`nix/flake.nix` は別系統で、ホスト名から `machineType`
+(`MacBook-Pro` / `mbp-m1` → `personal`、それ以外 → `work`) を導出している。
+chezmoi 側のテンプレートはもう `machineType` を使っていない。
 
 ## Zsh 設定の管理
 
@@ -114,9 +138,10 @@ karabiner-elements, obsidian, raycast, cmux, scroll-reverser, slack, tailscale-a
 ## 注意事項
 
 - `nix/hosts/common.nix` の personal 分岐は machineType == "personal" でガード
-- `chezmoi/private_dot_aws/config.tmpl` も machineType で分岐 (personal のみ展開)
+- `chezmoi/private_dot_aws/config.tmpl` は `.chezmoidata.yaml` の `features.aws` で分岐
 - `private_dot_config/nvim/.chezmoiignore` で lazy-lock.json を追跡除外
-- Claude settings.json の `language` フィールドは動的に変更される
+- Claude settings.json は部分管理 (上の「マシンごとの違いの管理」参照)。
+  `language` などの動的なキーは chezmoi の差分に出ない
 - **`run_onchange_*` で `{{ include ... | sha256sum }}` を使うならファイル名を
   `.tmpl` で終わらせること。** サフィックスがないとテンプレート展開されず、
   ハッシュ行がただのコメント文字列になって再実行が一切効かなくなる
