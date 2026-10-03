@@ -254,10 +254,10 @@ rgf() {
 
 # Nix darwin-rebuild switch
 rebuild() {
-  sudo darwin-rebuild switch --flake ~/.dotfiles/nix#{{ .machineType }} "$@"
+  sudo darwin-rebuild switch --flake ~/.dotfiles/nix#{{ get .nixConfig .chezmoi.hostname | default .chezmoi.hostname }} "$@"
 }
-{{ if eq .machineType "personal" -}}
-# Personal machine specific configuration
+{{ if has .chezmoi.hostname .features.aws -}}
+# AWS / coleta (.chezmoidata.yaml の features.aws に載っているホストのみ)
 alias coleta-next="{{ .chezmoi.homeDir }}/documents/coleta/coleta-next"
 alias coleta="{{ .chezmoi.homeDir }}/documents/coleta/coleta/coleta-server"
 alias awsp='export AWS_PROFILE="coleta/tf"'

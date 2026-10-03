@@ -1,0 +1,16 @@
+# マシンごとの違いはここに集約する。キーは `chezmoi data` の hostname。
+#
+# features: 機能ごとに「入れるホスト」を並べる。テンプレートからは
+#   {{ if has .chezmoi.hostname .features.aws }} ... {{ end }}
+# のように参照する。どこにも載っていないホストには何も入らない。
+features:
+  # AWS プロファイル (~/.aws/config) と coleta 用のエイリアス
+  aws:
+    - MacBook-Pro
+    - mbp-m1
+
+# rebuild() が使う nix-darwin の構成名 (nix/flake.nix の darwinConfigurations)。
+# 載っていないホストは hostname をそのまま構成名として使う。
+nixConfig:
+  MacBook-Pro: personal
+  mbp-m1: mbp-m1
