@@ -17,9 +17,9 @@ metadata:
 
 このスキルは、**今の会話セッションの内容を振り返って要約し**、Obsidian vaultの `20_Notes/` に新規ノートとして保存する。
 
-ユーザーに依頼された会話を要約する。別ツールの自動ログやhookが存在するとは仮定しない。参照できない会話は補完せず、要約できた範囲を明示する。
+Claude Code / Codex の現在の会話を対象に、**ユーザーが明示的に呼んだときだけ**、あとで読み返して要点がすぐわかる「まとめノート」を作る。特定のログプラグインや履歴ファイルの存在を前提にしない。別途保存された生ログには触れない。
 
-Vaultのパス: `/Users/shina/src/github.com/yushi265/digital-garden`（GHQ管理下）。パスが見つからない・vault構造が変わっている場合は憶測で進めずユーザーに確認する。
+Vault はユーザー指定または現在の Obsidian 設定から特定する。この環境では現在のホームディレクトリを基準とする `src/github.com/yushi265/digital-garden` も候補だが、実在と vault 構造を確認する。複数候補が残る場合や見つからない場合だけ確認する。ファイル操作とコマンド実行には、その環境で利用可能なツールを使う。
 
 ## ステップ1: 引数解析
 
@@ -55,7 +55,7 @@ Vaultのパス: `/Users/shina/src/github.com/yushi265/digital-garden`（GHQ管�
 内容を一言で表す簡潔な日本語タイトルを決める（例:「session-noteスキルの作成」）。
 
 ```
-rg --files /Users/shina/src/github.com/yushi265/digital-garden/20_Notes -g '*.md'
+rg --files <vault>/20_Notes -g '*.md'
 ```
 
 既存ファイルと同名になる場合は、末尾に日付を付けるなどして重複を避ける。
@@ -99,7 +99,7 @@ updated: YYYY-MM-DDTHH:mm
 - 🏷 タグ: tech
 ```
 
-保存の依頼だけで追加のGit操作は行わない。
+この依頼だけで追加の Git 操作は行わない。自動保存や自動コミットについて説明する場合は、実際の設定を確認できた事実だけ伝える。
 
 ## 注意事項
 

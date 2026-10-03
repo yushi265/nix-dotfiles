@@ -16,7 +16,7 @@ allowed-tools: Bash(herdr:*)
 
 herdr のペインを1枚増やして Claude セッションを立て、議題を投げ、応答を回収し、**最後に必ずペインを閉じる**。
 
-CLI の詳細仕様が必要になったら `~/.claude/skills/herdr/SKILL.md` を Read する（このスキルでは重複させない）。
+CLI の詳細仕様が必要になったら、このスキルのディレクトリを基準に [herdr](../herdr/SKILL.md) を読む。Claude Code / Codex で利用可能なシェル実行ツールを使い、以下の前提・許可範囲を守る。
 
 ## 重要な前提
 

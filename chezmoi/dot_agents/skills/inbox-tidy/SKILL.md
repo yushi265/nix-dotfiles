@@ -9,7 +9,6 @@ description: >
   Processes notes in the Obsidian vault's 00_Inbox folder:
   analyzes each note, assigns topic tags, optionally renames,
   completes frontmatter, and files them into 20_Notes.
-version: 0.1.0
 ---
 
 # Inbox Tidy Skill
@@ -22,10 +21,10 @@ version: 0.1.0
 
 ## 動的コンテキスト収集
 
-まず以下を実行してInboxの状態を把握する:
+Claude Code / Codex 共通で、利用可能なファイル・シェル実行ツールを使う。指定された vault を作業対象として、まず以下を実行してInboxの状態を把握する:
 
 ```
-!`ls -1 00_Inbox/ 2>/dev/null`
+ls -1 00_Inbox/ 2>/dev/null
 ```
 
 Inboxが空なら「Inboxは空やで、整理するもんないわ」と伝えて終了する。
