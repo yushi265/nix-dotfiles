@@ -18,7 +18,9 @@ fi
 # 重複を自動で落とす (先頭側が残る)。
 typeset -U path PATH
 
-# Homebrew PATH (for cask-installed tools like codex)
+# Homebrew PATH (for cask-installed tools like codex)。.zprofile でも実行するが、
+# login シェルを経由せずに起動した対話シェルでは .zprofile が読まれないため
+# ここでも実行する。重複は上の typeset -U で落ちる。
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # PATH の追加は mise activate より前に済ませること。mise は activate した
