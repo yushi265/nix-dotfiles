@@ -48,6 +48,8 @@ skills:
         - defuddle
         - json-canvas
         - obsidian-bases
+        - obsidian-cli
+        - obsidian-markdown
 
     # Claude Code は cloudflare@cloudflare プラグイン (MCP 同梱) で入れるため
     # claude-code を外し、二重登録を避ける。Codex の MCP は
