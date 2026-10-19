@@ -21,7 +21,7 @@ nix-darwin + home-manager（システム管理）と chezmoi（dotfiles 管理�
 
 ## マシンごとの違い
 
-`MacBook-Pro`（ユーザー `shiina`）と `mbp-m1`（ユーザー `shina`）の2台で同じソースを共有する。詳細と手順は `chezmoi/README.md` を参照する。
+`mbp-m5`（ユーザー `shiina`）と `mbp-m1`（ユーザー `shina`）の2台で同じソースを共有する。詳細と手順は `chezmoi/README.md` を参照する。
 
 - ホスト別の違いは `chezmoi/.chezmoidata.yaml` の `features` に書き、テンプレートでは `{{ if has .chezmoi.hostname .features.<機能> }}` で分岐する。
 - ホームのパスはベタ書きせず `{{ .chezmoi.homeDir }}` を使い、ファイル名を `.tmpl` にする。
