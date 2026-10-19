@@ -18,12 +18,12 @@
   outputs = { self, nixpkgs, nix-darwin, home-manager, ... }: let
     # Helper function to create darwin system
     # machineType ("personal" / "work") is declared per configuration below
-    mkDarwinSystem = { configName, machineType, username, system ? "aarch64-darwin" }:
+    mkDarwinSystem = { machineType, username, system ? "aarch64-darwin" }:
       nix-darwin.lib.darwinSystem {
         inherit system;
 
         specialArgs = {
-          inherit machineType username configName;
+          inherit machineType username;
         };
 
         modules = [
@@ -42,13 +42,11 @@
     # System configuration
     darwinConfigurations = {
       "personal" = mkDarwinSystem {
-        configName = "personal";
         machineType = "personal";
         username = "shiina";
       };
 
       "mbp-m1" = mkDarwinSystem {
-        configName = "personal";
         machineType = "personal";
         username = "shina";
       };

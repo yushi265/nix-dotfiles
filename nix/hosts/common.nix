@@ -1,5 +1,3 @@
-# configName は rebuild() が chezmoi (~/.zshrc) へ移ったため未使用。
-# flake.nix からは引き続き渡されるが ... で受け流す。
 { pkgs, lib, machineType, username, ... }:
 
 {
@@ -87,8 +85,7 @@
       "mise"
     ];
 
-    # GUI applications (macOS-specific tools only)
-    # Most GUI apps are now managed via nixpkgs in environment.systemPackages
+    # GUI applications
     casks = [
       # p10k のアイコン表示に必要 (~/.p10k.zsh の POWERLEVEL9K_MODE=nerdfont-v3)。
       # ghostty の font-family もこのフォント名を指している。
@@ -118,11 +115,11 @@
     home = "/Users/${username}";
   };
 
-  # Primary user for system settings
-  system.primaryUser = username;
-
-  # macOS system settings
   system = {
+    # Primary user for system settings
+    primaryUser = username;
+
+    # macOS system settings
     defaults = {
       dock = {
         autohide = true;
@@ -144,10 +141,8 @@
     };
 
     stateVersion = 5;
+
+    # Used for backwards compatibility
+    configurationRevision = null;
   };
-
-  # Activation scripts are now managed by home-manager (see home.nix)
-
-  # Used for backwards compatibility
-  system.configurationRevision = null;
 }
