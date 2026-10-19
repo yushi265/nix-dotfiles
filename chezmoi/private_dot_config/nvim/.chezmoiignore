@@ -1,1 +1,3 @@
+# lazy.nvim が :Lazy update / sync のたびに書き換えるため管理しない。
+# ロックはマシンごとに ~/.config/nvim/lazy-lock.json に置く。
 lazy-lock.json
