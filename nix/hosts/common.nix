@@ -34,6 +34,7 @@
     bat
     fzf
     zoxide
+    git
     git-open
     yazi
     delta
