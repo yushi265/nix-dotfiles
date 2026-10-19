@@ -27,7 +27,7 @@ nix-darwin + home-manager（システム管理）と chezmoi（dotfiles 管理�
 - ホームのパスはベタ書きせず `{{ .chezmoi.homeDir }}` を使い、ファイル名を `.tmpl` にする。
 - アプリが書き換えるファイルは丸ごと管理しない。`~/.claude/settings.json` は部分管理で、共有設定は `chezmoi/.chezmoitemplates/claude-settings.json` を編集する。`~/.codex/config.toml` は管理対象外で、不足分だけスクリプトで追記する。
 - ホームの現状を丸ごと `chezmoi add` やコピーで取り込まない。`chezmoi diff` を見てキー・行単位で入れる。
-- nix 側は hostname 由来の `machineType`（2台とも `personal`）で分岐する。chezmoi のテンプレートでは `machineType` を使わない。
+- nix 側は `nix/flake.nix` の `darwinConfigurations` に構成ごとに書いた `machineType`（2台とも `personal`）で分岐する。chezmoi には `machineType` が無い。
 - ホスト分岐を変える場合は2台両方への影響を示し、`chezmoi/README.md` の表も更新する。
 
 ## スキル

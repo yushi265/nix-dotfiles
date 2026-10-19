@@ -132,9 +132,7 @@ chezmoi diff
 
 ## 補足: nix 側の `machineType`
 
-`nix/flake.nix` はこの表とは別系統で、hostname から `machineType`
-(`MacBook-Pro` / `mbp-m1` → `personal`、それ以外 → `work`) を導出し、
-`nix/hosts/common.nix` のパッケージ分岐に使っている。
-`.chezmoi.toml.tmpl` にも同じ値が残っているが、chezmoi のテンプレートは
-もう `machineType` を参照していない。2 台とも `personal` になるので、
-2 台の違いを書く用途には使えない。
+`nix/flake.nix` はこの表とは別系統で、`darwinConfigurations` の構成ごとに
+`machineType` (`personal` / `work`) を直接書き、`nix/hosts/common.nix` の
+パッケージ分岐に使っている。hostname からは判定しない。chezmoi 側には
+`machineType` は無い。2 台とも `personal` なので、2 台の違いを書く用途には使えない。

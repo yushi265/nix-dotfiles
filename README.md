@@ -12,7 +12,7 @@ nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) の
 │   ├── hosts/common.nix          # パッケージ / Homebrew / macOS 設定
 │   └── home.nix                  # home-manager (最小構成)
 ├── chezmoi/                      # dotfiles (chezmoi 管理)
-│   ├── .chezmoi.toml.tmpl        # sourceDir (+ nix 互換の machineType)
+│   ├── .chezmoi.toml.tmpl        # sourceDir
 │   ├── .chezmoidata.yaml         # ホスト別の機能フラグ / nix 構成名
 │   ├── .chezmoidata/skills.yaml  # npx skills で入れる外部スキルの宣言
 │   ├── .chezmoitemplates/        # 共有テンプレート (claude-settings.json)
@@ -47,7 +47,7 @@ Zsh 設定は `chezmoi/dot_zshrc.tmpl` に集約している。nix はプラグ�
 
 マシンごとの違いは `chezmoi/.chezmoidata.yaml` に集約している (機能ごとに入れるホスト名を並べる)。
 `~/.claude/settings.json` は共有するキーだけを chezmoi が置き換える部分管理。詳細は `chezmoi/README.md` を参照。
-nix 側の `machineType` は hostname から自動判定: `MacBook-Pro` / `mbp-m1` → `personal`、それ以外 → `work`
+nix 側の `machineType` (`personal` / `work`) は `nix/flake.nix` の `darwinConfigurations` に構成ごとに書く (hostname からは判定しない)。
 
 ## 新マシンセットアップ
 
