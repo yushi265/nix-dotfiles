@@ -1,9 +1,3 @@
-# Retired Fable 5 files from the former shared-skill layout.
-.agents/skills/fable5
-.claude/skills/fable5
-.codex/skills/fable5
-.claude/rules/fable5-protocol.md
-
 # Retired AstroNvim files. The nvim config is LazyVim (init.lua -> config.lazy),
 # whose `import = "plugins"` would otherwise still load the astro specs.
 .config/nvim/ASTRONVIM_GUIDE.md

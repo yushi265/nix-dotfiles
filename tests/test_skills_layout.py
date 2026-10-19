@@ -1,4 +1,4 @@
-"""外部スキルの導入と配置移行のスクリプトを一時ディレクトリで検証する（applyは実行しない）。"""
+"""外部スキルの導入スクリプトを一時ディレクトリで検証する（applyは実行しない）。"""
 import json
 import os
 import subprocess
@@ -9,7 +9,6 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 SOURCE = REPO / 'chezmoi'
 INSTALL = SOURCE / 'run_onchange_after_05-skills-install.sh.tmpl'
-MIGRATION = SOURCE / 'run_onchange_after_06-skills-layout-migration.sh.tmpl'
 
 
 def render(template, destination):
@@ -90,59 +89,6 @@ class InstallTest(unittest.TestCase):
                 self.assertTrue(custom.is_symlink())
                 self.assertTrue(real.is_dir())
                 self.assertTrue(shared.is_symlink())
-
-
-class MigrationTest(unittest.TestCase):
-    def test_removes_only_known_duplicates(self):
-        with tempfile.TemporaryDirectory(prefix='skills migration ') as directory:
-            home = Path(directory)
-            agents = home / '.agents/skills'
-            claude = home / '.claude/skills'
-            codex = home / '.codex/skills'
-            for folder in (agents, claude, codex):
-                folder.mkdir(parents=True)
-
-            def skill(folder, name, aws=False):
-                path = folder / name
-                path.mkdir()
-                (path / 'SKILL.md').write_text(name)
-                if aws:
-                    (path / '.aws-skill-metadata').write_text('{"version": "v2"}')
-                return path
-
-            aws_copies = [skill(agents, 'aws-cdk', aws=True), skill(claude, 'aws-cdk', aws=True)]
-            kept_local = skill(agents, 'git-commit')
-            kept_claude = skill(claude, 'learned')
-            aws_link = claude / 'aws-iam'
-            aws_link.symlink_to(skill(home, 'aws-iam', aws=True))
-
-            # npx skills で ~/.agents に入った外部スキルだけ Codex 側の実体を消す。
-            skill(agents, 'defuddle')
-            codex_duplicate = skill(codex, 'defuddle')
-            codex_pending = skill(codex, 'json-canvas')
-            codex_unmanaged = skill(codex, 'hatch-pet')
-            skill(agents, 'hatch-pet')
-            codex_system = codex / '.system'
-            codex_system.mkdir()
-
-            rendered = render(MIGRATION, home)
-            # 実ホームを操作しないことを実行前に確認。
-            self.assertIn(f'migration_root="{home}"', rendered)
-            script = home / 'migration.sh'
-            script.write_text(rendered)
-            subprocess.run(['bash', '-n', str(script)], check=True)
-            for _ in range(2):
-                subprocess.run(['bash', str(script)], check=True)
-                for path in aws_copies + [codex_duplicate]:
-                    self.assertFalse(path.exists(), path)
-                for path in (kept_local, kept_claude, codex_pending, codex_unmanaged, codex_system):
-                    self.assertTrue(path.is_dir(), path)
-                self.assertTrue(aws_link.is_symlink())
-
-    def test_empty_destination_stays_empty(self):
-        with tempfile.TemporaryDirectory() as directory:
-            subprocess.run(['bash'], input=render(MIGRATION, directory), text=True, check=True)
-            self.assertEqual(list(Path(directory).iterdir()), [])
 
 
 if __name__ == '__main__':
