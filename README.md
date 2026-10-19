@@ -22,7 +22,7 @@ nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) の
 │   ├── dot_gitconfig
 │   ├── dot_p10k.zsh, dot_tmux.conf, dot_vimrc, dot_npmrc.tmpl
 │   ├── private_dot_aws/          # ~/.aws/config (features.aws のホストのみ展開)
-│   ├── private_dot_claude/       # ~/.claude/ (CLAUDE.md / settings.json / rules / skills)
+│   ├── private_dot_claude/       # ~/.claude/ (settings.json / rules / skills)
 │   ├── dot_agents/               # ~/.agents/skills/ (自作スキルの実体)
 │   ├── private_dot_codex/        # ~/.codex/ (AGENTS.md / keybindings.json)
 │   ├── private_dot_config/       # ~/.config/{ghostty,nvim,yazi,zellij,mise,lazygit,git,gh,...}

@@ -6,3 +6,7 @@
 .config/nvim/lua/polish.lua
 .config/nvim/lua/plugins/astrocore.lua
 .config/nvim/lua/plugins/astroui.lua
+
+# Retired global Claude Code instructions (generic workflow template, superseded by
+# per-repo AGENTS.md and auto-memory).
+.claude/CLAUDE.md
