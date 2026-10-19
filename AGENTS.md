@@ -11,7 +11,7 @@ nix-darwin + home-manager（システム管理）と chezmoi（dotfiles 管理�
 - `chezmoi/`: dotfiles の編集元。Zsh は `dot_zshrc.tmpl`、アプリ設定は `private_dot_config/`。
 - `chezmoi/README.md`: ホスト一覧、機能フラグ、マシンごとの違いの管理手順。
 - `chezmoi/private_dot_codex/AGENTS.md`: 全プロジェクトに共通する Codex の個人設定。
-- `chezmoi/dot_agents/skills/`: 共有スキルの実体（詳細は「スキル」を参照）。
+- `chezmoi/dot_agents/skills/`: 自作スキルの実体。外部スキルは `chezmoi/.chezmoidata/skills.yaml`（詳細は「スキル」を参照）。
 - `README.md`: セットアップ、日常操作（`rebuild` / `moi apply`）、ロールバックの手順。
 - `CLAUDE.md`: `@AGENTS.md` の1行だけ。Claude Code にこのファイルを読ませるための入口なので、内容はここに書く。
 
@@ -32,9 +32,12 @@ nix-darwin + home-manager（システム管理）と chezmoi（dotfiles 管理�
 
 ## スキル
 
-- 実体は `chezmoi/dot_agents/skills/<name>/`（展開先 `~/.agents/skills/`）に置く。Codex は展開先を直接読む。
-- Claude Code が読むのは `~/.claude/skills/`。そこへは `private_dot_claude/skills/symlink_<name>.tmpl`（中身は `{{ .chezmoi.homeDir }}/.agents/skills/<name>`）で symlink を張る。`.claude/skills/` 直下に実体を置かない。
-- skills CLI（`~/.agents/.skill-lock.json`）で入れた外部スキルも、実体を `dot_agents/skills/` にコピーして追跡する。skills CLI で更新したら差分を取り込み直す。更新元を維持し、無関係な一括書き換えを避ける。
+ユーザースコープのスキルは3つの経路のどれか1つで入れる。同じスキルを複数の経路から入れない。手順の詳細は `chezmoi/dot_agents/skills/manage-skills/SKILL.md`。
+
+- **自作**（上流を改変した版を置くのはユーザーが明示した場合だけ）: chezmoi で管理する。実体は `chezmoi/dot_agents/skills/<name>/`（展開先 `~/.agents/skills/`）に置き、Claude Code へは `private_dot_claude/skills/symlink_<name>.tmpl`（中身は `{{ .chezmoi.homeDir }}/.agents/skills/<name>`）で symlink を張る。`.claude/skills/` 直下に実体を置かない。
+- **外部の純スキル**（SKILL.md と references / scripts / assets だけ）: `chezmoi/.chezmoidata/skills.yaml` に宣言する。`run_onchange_after_05-skills-install.sh.tmpl` が `npx skills add -g` で入れる。chezmoi に写しを置かない。`~/.agents/.skill-lock.json` はツールが書き換えるので管理しない。
+- **hooks・MCP・subagent・command を伴うもの**: Claude Code プラグインにする。`.chezmoitemplates/claude-settings.json` の `enabledPlugins` / `extraKnownMarketplaces` に書く。Codex 向けにスキルだけ要る場合は `skills.yaml` で `agents` から `claude-code` を外す。
+- Codex と Cursor は `~/.agents/skills` を直接読む。
 - `dot_agents/skills/herdr/SKILL.md` は herdr バイナリ同梱版の写しで、自動追従しない。herdr を更新したら `herdr --skill > chezmoi/dot_agents/skills/herdr/SKILL.md` で再生成する。
 - `~/.claude/agent/skills/` は同内容の重複コピーで管理外。
 - 追加・更新ではリンクと参照先も確認する。

@@ -1,0 +1,34 @@
+#!/bin/bash
+# .chezmoidata/skills.yaml に宣言した外部スキルを npx skills で入れる。
+# 宣言が変わったときだけ再実行する。既存のスキルは上書き (= 最新化) される。
+# 宣言から外したスキルは消さない。削除は `npx skills remove -g <name> -y` で行う。
+# {{ .skills | toJson | sha256sum }}
+set -euo pipefail
+
+if ! command -v npx >/dev/null 2>&1; then
+  echo "npx が見つからないため外部スキルの導入を中断する" >&2
+  exit 1
+fi
+
+{{ range .skills.external -}}
+npx -y skills add {{ .source | quote }} -g -y
+{{- range .skills }} -s {{ . | quote }}{{ end }}
+{{- range (dig "agents" $.skills.defaultAgents .) }} -a {{ . | quote }}{{ end }}
+{{ end }}
+# claude-code を対象から外したスキル (プラグインで入れるもの) は、以前の構成で
+# 張った ~/.claude/skills のリンクが残ると二重登録になる。~/.agents の実体を
+# 指すリンクだけ外し、実ディレクトリや別のリンク先は残す。
+unlink_claude() {
+  local name link
+  for name in "$@"; do
+    link="$HOME/.claude/skills/$name"
+    if [ -L "$link" ] && [ "$link" -ef "$HOME/.agents/skills/$name" ]; then
+      rm -- "$link"
+    fi
+  done
+}
+{{ range .skills.external -}}
+{{ if not (has "claude-code" (dig "agents" $.skills.defaultAgents .)) -}}
+unlink_claude{{ range .skills }} {{ . | quote }}{{ end }}
+{{ end -}}
+{{ end -}}

@@ -58,17 +58,41 @@
     "refreshInterval": 10
   },
   "enabledPlugins": {
+    "aws-core@agent-toolkit-for-aws": true,
     "claude-mem@thedotmack": true,
     "claude-security@claude-plugins-official": true,
+    "cloudflare@cloudflare": true,
     "code-simplifier@claude-plugins-official": true,
     "codex@openai-codex": true,
-    "everything-claude-code@everything-claude-code": true,
     "gopls-lsp@claude-plugins-official": true,
     "logging-tool@logging-tool": true,
     "notion@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": true
+    "pstack@cursor-plugins": true,
+    "security-guidance@claude-plugins-official": true,
+    "yomiyasu@yomiyasu": true
   },
   "extraKnownMarketplaces": {
+    "agent-toolkit-for-aws": {
+      "source": {
+        "source": "github",
+        "repo": "aws/agent-toolkit-for-aws"
+      },
+      "autoUpdate": true
+    },
+    "cloudflare": {
+      "source": {
+        "source": "github",
+        "repo": "cloudflare/skills"
+      },
+      "autoUpdate": true
+    },
+    "cursor-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "cursor/plugins"
+      },
+      "autoUpdate": true
+    },
     "logging-tool": {
       "source": {
         "source": "directory",
@@ -86,6 +110,13 @@
       "source": {
         "source": "github",
         "repo": "thedotmack/claude-mem"
+      },
+      "autoUpdate": true
+    },
+    "yomiyasu": {
+      "source": {
+        "source": "github",
+        "repo": "nanaism/yomiyasu"
       },
       "autoUpdate": true
     }
