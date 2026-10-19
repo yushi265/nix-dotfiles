@@ -1,4 +1,4 @@
-{ pkgs, lib, machineType, username, ... }:
+{ pkgs, username, ... }:
 
 {
   # Nix settings
@@ -47,13 +47,13 @@
     zsh-fast-syntax-highlighting
     zsh-autosuggestions
     zsh-completions
-  ] ++ (lib.optionals (machineType == "personal") [
-    # AWS tools (personal machines only)
+
+    # AWS tools
     awscli2
     terraform
     # aws-sam-cli  # FIXME: ビルドでテストが失敗するため一旦コメントアウト
     ssm-session-manager-plugin
-  ]);
+  ];
 
   # Zsh configuration
   programs.zsh = {

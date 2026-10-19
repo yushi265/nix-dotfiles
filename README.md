@@ -13,7 +13,7 @@ nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) の
 │   └── home.nix                  # home-manager (最小構成)
 ├── chezmoi/                      # dotfiles (chezmoi 管理)
 │   ├── .chezmoi.toml.tmpl        # sourceDir
-│   ├── .chezmoidata.yaml         # ホスト別の機能フラグ / nix 構成名
+│   ├── .chezmoidata.yaml         # ホスト別の機能フラグ
 │   ├── .chezmoidata/skills.yaml  # npx skills で入れる外部スキルの宣言
 │   ├── .chezmoitemplates/        # 共有テンプレート (claude-settings.json)
 │   ├── .chezmoiignore            # 自動生成ファイルを追跡から除外
@@ -27,7 +27,7 @@ nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) の
 │   ├── private_dot_codex/        # ~/.codex/ (AGENTS.md / keybindings.json)
 │   ├── private_dot_config/       # ~/.config/{ghostty,nvim,yazi,zellij,mise,lazygit,git,gh,...}
 │   ├── private_dot_ssh/          # ~/.ssh/config
-│   └── run_*                     # obsidian / mise / 外部スキル導入 / スキル配置の移行
+│   └── run_*                     # obsidian / mise / Codex の MCP 追記 / 外部スキル導入
 ├── README.md
 ├── CLAUDE.md                     # @AGENTS.md だけ (Claude Code 用の入口)
 └── AGENTS.md
@@ -47,7 +47,7 @@ Zsh 設定は `chezmoi/dot_zshrc.tmpl` に集約している。nix はプラグ�
 
 マシンごとの違いは `chezmoi/.chezmoidata.yaml` に集約している (機能ごとに入れるホスト名を並べる)。
 `~/.claude/settings.json` は共有するキーだけを chezmoi が置き換える部分管理。詳細は `chezmoi/README.md` を参照。
-nix 側の `machineType` (`personal` / `work`) は `nix/flake.nix` の `darwinConfigurations` に構成ごとに書く (hostname からは判定しない)。
+nix 側は `nix/flake.nix` の `darwinConfigurations` に hostname と同じ名前で構成を書く (`mbp-m5` / `mbp-m1`)。2 台の違いはユーザー名だけ。
 
 ## 新マシンセットアップ
 
@@ -59,7 +59,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 git clone https://github.com/yushi265/nix-dotfiles.git ~/.dotfiles
 
 # 3. nix-darwin を適用
-nix run nix-darwin -- switch --flake ~/.dotfiles/nix#personal
+nix run nix-darwin -- switch --flake ~/.dotfiles/nix#<hostname>  # mbp-m5 / mbp-m1
 
 # 4. chezmoi で dotfiles を展開
 chezmoi init --source=~/.dotfiles/chezmoi
@@ -70,7 +70,7 @@ chezmoi apply
 
 ```bash
 # システム設定を変更・適用 (パッケージ追加、macOS defaults 等)
-rebuild                        # = sudo darwin-rebuild switch --flake ~/.dotfiles/nix#...
+rebuild                        # = sudo darwin-rebuild switch --flake ~/.dotfiles/nix#<hostname>
 
 # dotfiles を変更・適用 (zsh 設定もこちら。rebuild 不要)
 moi diff                       # = chezmoi diff
@@ -102,8 +102,6 @@ sudo darwin-rebuild --rollback
 
 - このリポジトリの作業指示は `AGENTS.md`、全プロジェクト共通の個人設定は `chezmoi/private_dot_codex/AGENTS.md` で管理する。
 - 自作スキルの実体は `chezmoi/dot_agents/skills/<name>/` に置く。外部スキルは `chezmoi/.chezmoidata/skills.yaml` に宣言し、`run_onchange_after_05-skills-install.sh.tmpl` が `npx skills add -g` で入れる。hooks や MCP を伴うものは Claude Code プラグインにする。CodexとCursorは `~/.agents/skills/` を直接読み、Claude Codeは `~/.claude/skills/` のリンク経由で読む。追加・更新・削除の手順は `manage-skills` スキルにまとめている。
-- `run_onchange_after_06-skills-layout-migration.sh.tmpl` は今の構成への移行用。AWS独自インストーラが置いた実体コピー（`.aws-skill-metadata` 付き）と、npx skillsで入れ直した外部スキルの `~/.codex/skills/` 側の実体を削除する。AWSのスキルは `aws-core` プラグインで入れる。
-- `run_onchange_after_03-codex-skills-symlink.sh.tmpl` は旧構成からの移行用。将来のapply時に、管理対象かつ同じ実体へ到達する `~/.codex/skills/` → `~/.claude/skills/` の旧リンクだけを削除する。実体、独自リンク、管理外スキル、`.system` は保持する。廃止した `fable5` の実体と旧リンク・ルールは `.chezmoiremove` で削除する。
 - `~/.codex/config.toml`、認証情報、履歴、プラグインキャッシュは管理しない。モデルや権限設定はこの変更の対象外。
 - プラグインとローカルに類似スキルがある場合は、使う配布元を選ぶ。プラグイン側の削除・無効化はこのリポジトリの移行処理では行わない。
 
@@ -113,10 +111,10 @@ sudo darwin-rebuild --rollback
 git diff --check
 chezmoi --source "$PWD/chezmoi" cat "$HOME/.codex/AGENTS.md"
 python3 -B -m unittest discover -s tests -v
-darwin-rebuild build --flake "$PWD/nix#personal"
+darwin-rebuild build --flake "$PWD/nix#$(hostname -s)"
 ```
 
-移行テストは一時ディレクトリでスクリプトと削除指定を検証し、実ホームにはapplyしない。
+テストは一時ディレクトリでスクリプトを検証し、実ホームにはapplyしない。
 共有スキルの変更は、適用後にはClaude Codeにも反映される。
 
 仕様の参照先: [AGENTS.mdの読み込み](https://learn.chatgpt.com/docs/agent-configuration/agents-md)、[スキルの配置と検出](https://learn.chatgpt.com/docs/build-skills)。

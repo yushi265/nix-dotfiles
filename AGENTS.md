@@ -6,7 +6,7 @@
 
 nix-darwin + home-manager（システム管理）と chezmoi（dotfiles 管理）のハイブリッド構成。
 
-- `nix/flake.nix`: input と Darwin 構成。`personal` はユーザー `shiina`、`mbp-m1` は `shina`。
+- `nix/flake.nix`: input と Darwin 構成。構成名は hostname と同じで、`mbp-m5` はユーザー `shiina`、`mbp-m1` は `shina`。
 - `nix/hosts/common.nix`: パッケージ、Homebrew、macOS defaults。`nix/home.nix` は最小構成。
 - `chezmoi/`: dotfiles の編集元。Zsh は `dot_zshrc.tmpl`、アプリ設定は `private_dot_config/`。
 - `chezmoi/README.md`: ホスト一覧、機能フラグ、マシンごとの違いの管理手順。
@@ -27,7 +27,7 @@ nix-darwin + home-manager（システム管理）と chezmoi（dotfiles 管理�
 - ホームのパスはベタ書きせず `{{ .chezmoi.homeDir }}` を使い、ファイル名を `.tmpl` にする。
 - アプリが書き換えるファイルは丸ごと管理しない。`~/.claude/settings.json` は部分管理で、共有設定は `chezmoi/.chezmoitemplates/claude-settings.json` を編集する。`~/.codex/config.toml` は管理対象外で、不足分だけスクリプトで追記する。
 - ホームの現状を丸ごと `chezmoi add` やコピーで取り込まない。`chezmoi diff` を見てキー・行単位で入れる。
-- nix 側は `nix/flake.nix` の `darwinConfigurations` に構成ごとに書いた `machineType`（2台とも `personal`）で分岐する。chezmoi には `machineType` が無い。
+- nix 側は2台で同じ `nix/hosts/common.nix` を使い、違いは `darwinConfigurations` に書くユーザー名だけ。ホスト別のパッケージが必要になったら構成ごとにモジュールを足す。
 - ホスト分岐を変える場合は2台両方への影響を示し、`chezmoi/README.md` の表も更新する。
 
 ## スキル
@@ -49,7 +49,7 @@ nix-darwin + home-manager（システム管理）と chezmoi（dotfiles 管理�
 - 差分確認: `git diff --check` と対象ファイルの差分。
 - chezmoi の展開確認: `chezmoi --source "$PWD/chezmoi" cat <展開先の絶対パス>`。テンプレートは `execute-template` で確認する。
 - シェルを変更したら構文チェックを行い、ファイル操作は一時ディレクトリでも検証する。
-- 構成ビルド: `darwin-rebuild build --flake "$PWD/nix#personal"`。実行できない場合は原因と未検証事項を報告する。
+- 構成ビルド: `darwin-rebuild build --flake "$PWD/nix#$(hostname -s)"`。実行できない場合は原因と未検証事項を報告する。
 
 `chezmoi apply`（`moi apply`）、`darwin-rebuild switch`（`rebuild`）、`nix flake update` は検証とは別の操作。ユーザーが適用禁止を指定した場合は実行しない。適用が依頼されていない作業は編集と検証までに留める。
 

@@ -23,8 +23,8 @@
 - **経緯**: `mbp-m1` (user: shina) のホーム設定を丸ごと取り込んだコミットが
   `MacBook-Pro` (user: shiina) 側で `/Users/shina` のパスや専用 hook として混入し、
   revert した (2026-10-03)。同日、逆向きに `/Users/shiina` を取り込みかけたのも同じ原因。
-- **注意**: `machineType` は2台とも `personal` になるので、2台の違いは表現できない。
-  chezmoi テンプレートでは使わない (nix 側にだけ残っている)。
+- **注意**: nix の `machineType` は2台とも `personal` で何も分岐していなかったため
+  2026-10-20 に削除した。2台の違いは chezmoi の `features` で書く。
 
 ## コミットには署名を付ける
 
