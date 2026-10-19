@@ -14,6 +14,7 @@ nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) の
 ├── chezmoi/                      # dotfiles (chezmoi 管理)
 │   ├── .chezmoi.toml.tmpl        # sourceDir (+ nix 互換の machineType)
 │   ├── .chezmoidata.yaml         # ホスト別の機能フラグ / nix 構成名
+│   ├── .chezmoidata/skills.yaml  # npx skills で入れる外部スキルの宣言
 │   ├── .chezmoitemplates/        # 共有テンプレート (claude-settings.json)
 │   ├── .chezmoiignore            # 自動生成ファイルを追跡から除外
 │   ├── dot_zshrc.tmpl            # zsh 設定一式 (プラグイン/エイリアス/関数)
@@ -22,11 +23,11 @@ nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) の
 │   ├── dot_p10k.zsh, dot_tmux.conf, dot_vimrc, dot_npmrc.tmpl
 │   ├── private_dot_aws/          # ~/.aws/config (features.aws のホストのみ展開)
 │   ├── private_dot_claude/       # ~/.claude/ (CLAUDE.md / settings.json / rules / skills)
-│   ├── dot_agents/               # ~/.agents/skills/ (共有スキルの実体)
+│   ├── dot_agents/               # ~/.agents/skills/ (自作スキルの実体)
 │   ├── private_dot_codex/        # ~/.codex/ (AGENTS.md / keybindings.json)
 │   ├── private_dot_config/       # ~/.config/{ghostty,nvim,yazi,zellij,mise,lazygit,git,gh,...}
 │   ├── private_dot_ssh/          # ~/.ssh/config
-│   └── run_*                     # obsidian / mise / 旧Codexスキルリンクの移行
+│   └── run_*                     # obsidian / mise / 外部スキル導入 / スキル配置の移行
 ├── README.md
 ├── CLAUDE.md                     # @AGENTS.md だけ (Claude Code 用の入口)
 └── AGENTS.md
@@ -100,7 +101,8 @@ sudo darwin-rebuild --rollback
 ## Codexの設定管理
 
 - このリポジトリの作業指示は `AGENTS.md`、全プロジェクト共通の個人設定は `chezmoi/private_dot_codex/AGENTS.md` で管理する。
-- スキルの実体は `chezmoi/dot_agents/skills/<name>/` に置く。Codexは展開先の `~/.agents/skills/` を直接読み、Claude Codeは `~/.claude/skills/` のリンク経由で読む。
+- 自作スキルの実体は `chezmoi/dot_agents/skills/<name>/` に置く。外部スキルは `chezmoi/.chezmoidata/skills.yaml` に宣言し、`run_onchange_after_05-skills-install.sh.tmpl` が `npx skills add -g` で入れる。hooks や MCP を伴うものは Claude Code プラグインにする。CodexとCursorは `~/.agents/skills/` を直接読み、Claude Codeは `~/.claude/skills/` のリンク経由で読む。追加・更新・削除の手順は `manage-skills` スキルにまとめている。
+- `run_onchange_after_06-skills-layout-migration.sh.tmpl` は今の構成への移行用。AWS独自インストーラが置いた実体コピー（`.aws-skill-metadata` 付き）と、npx skillsで入れ直した外部スキルの `~/.codex/skills/` 側の実体を削除する。AWSのスキルは `aws-core` プラグインで入れる。
 - `run_onchange_after_03-codex-skills-symlink.sh.tmpl` は旧構成からの移行用。将来のapply時に、管理対象かつ同じ実体へ到達する `~/.codex/skills/` → `~/.claude/skills/` の旧リンクだけを削除する。実体、独自リンク、管理外スキル、`.system` は保持する。廃止した `fable5` の実体と旧リンク・ルールは `.chezmoiremove` で削除する。
 - `~/.codex/config.toml`、認証情報、履歴、プラグインキャッシュは管理しない。モデルや権限設定はこの変更の対象外。
 - プラグインとローカルに類似スキルがある場合は、使う配布元を選ぶ。プラグイン側の削除・無効化はこのリポジトリの移行処理では行わない。
@@ -110,7 +112,7 @@ sudo darwin-rebuild --rollback
 ```bash
 git diff --check
 chezmoi --source "$PWD/chezmoi" cat "$HOME/.codex/AGENTS.md"
-python3 -B -m unittest discover -s tests -p 'test_codex_skills_migration.py' -v
+python3 -B -m unittest discover -s tests -v
 darwin-rebuild build --flake "$PWD/nix#personal"
 ```
 

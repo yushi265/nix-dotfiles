@@ -58,8 +58,10 @@
     "refreshInterval": 10
   },
   "enabledPlugins": {
+    "aws-core@agent-toolkit-for-aws": true,
     "claude-mem@thedotmack": true,
     "claude-security@claude-plugins-official": true,
+    "cloudflare@cloudflare": true,
     "code-simplifier@claude-plugins-official": true,
     "codex@openai-codex": true,
     "everything-claude-code@everything-claude-code": true,
@@ -69,6 +71,20 @@
     "security-guidance@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
+    "agent-toolkit-for-aws": {
+      "source": {
+        "source": "github",
+        "repo": "aws/agent-toolkit-for-aws"
+      },
+      "autoUpdate": true
+    },
+    "cloudflare": {
+      "source": {
+        "source": "github",
+        "repo": "cloudflare/skills"
+      },
+      "autoUpdate": true
+    },
     "logging-tool": {
       "source": {
         "source": "directory",

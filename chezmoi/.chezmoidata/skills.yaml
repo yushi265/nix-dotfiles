@@ -1,0 +1,72 @@
+# npx skills (https://skills.sh) で入れる外部スキルの宣言。
+# run_onchange_after_05-skills-install.sh.tmpl がこの内容のハッシュで再実行し、
+# `npx skills add <source> -g -s <skill>... -a <agent>... -y` を流す。
+#
+# 実体は ~/.agents/skills/<name> に置かれる。codex / cursor はそこを直接読み、
+# claude-code には ~/.claude/skills/<name> の symlink が張られる。
+#
+# 自作スキルはここに書かず chezmoi/dot_agents/skills/ に置く。
+# hooks / MCP などを伴うものは Claude Code プラグインにする
+# (.chezmoitemplates/claude-settings.json の enabledPlugins)。
+# 書き方と判断基準は manage-skills スキルを参照。
+skills:
+  # agents を省略したソースに使う対象エージェント。
+  defaultAgents:
+    - claude-code
+    - codex
+    - cursor
+
+  external:
+    - source: mattpocock/skills
+      skills:
+        - codebase-design
+        - domain-modeling
+        - grill-me
+        - grill-with-docs
+        - grilling
+        - improve-codebase-architecture
+        - prototype
+        - research
+        - setup-matt-pocock-skills
+        - triage
+        - wayfinder
+
+    - source: cathrynlavery/diagram-design
+      skills:
+        - diagram-design
+
+    - source: humanlayer/skills
+      skills:
+        - show-me
+
+    - source: vercel-labs/skills
+      skills:
+        - find-skills
+
+    - source: kepano/obsidian-skills
+      skills:
+        - defuddle
+        - json-canvas
+        - obsidian-bases
+
+    # Claude Code は cloudflare@cloudflare プラグイン (MCP 同梱) で入れるため
+    # claude-code を外し、二重登録を避ける。Codex の MCP は
+    # run_onchange_after_04-cloudflare-mcp.sh.tmpl で別途登録している。
+    - source: cloudflare/skills
+      agents:
+        - codex
+        - cursor
+      skills:
+        - agents-sdk
+        - cloudflare
+        - cloudflare-email-service
+        - cloudflare-one
+        - cloudflare-one-migrations
+        - durable-objects
+        - sandbox-migrate-to-next
+        - sandbox-next
+        - sandbox-stable
+        - turnstile-spin
+        - web-perf
+        - workers-best-practices
+        - wrangler
