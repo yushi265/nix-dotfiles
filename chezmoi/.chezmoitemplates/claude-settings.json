@@ -69,7 +69,6 @@
     "notion@claude-plugins-official": true,
     "pstack@cursor-plugins": true,
     "security-guidance@claude-plugins-official": true,
-    "slack@claude-plugins-official": true,
     "yomiyasu@yomiyasu": true
   },
   "extraKnownMarketplaces": {
