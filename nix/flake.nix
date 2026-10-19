@@ -17,45 +17,39 @@
 
   outputs = { self, nixpkgs, nix-darwin, home-manager, ... }: let
     # Helper function to create darwin system
-    mkDarwinSystem = { configName, hostname, username, system ? "aarch64-darwin" }: let
-      # Derive machineType from hostname
-      # "MacBook-Pro" or "MacBook-Pro.local" -> "personal"
-      # anything else -> "work"
-      machineType = if nixpkgs.lib.hasInfix "MacBook-Pro" hostname
-                       || hostname == "mbp-m1"
-                    then "personal"
-                    else "work";
-    in nix-darwin.lib.darwinSystem {
-      inherit system;
+    # machineType ("personal" / "work") is declared per configuration below
+    mkDarwinSystem = { configName, machineType, username, system ? "aarch64-darwin" }:
+      nix-darwin.lib.darwinSystem {
+        inherit system;
 
-      specialArgs = {
-        inherit machineType username configName;
+        specialArgs = {
+          inherit machineType username configName;
+        };
+
+        modules = [
+          ./hosts/common.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.${username} = import ./home.nix;
+            home-manager.extraSpecialArgs = { inherit machineType; };
+            home-manager.backupFileExtension = "backup";
+          }
+        ];
       };
-
-      modules = [
-        ./hosts/common.nix
-        home-manager.darwinModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.users.${username} = import ./home.nix;
-          home-manager.extraSpecialArgs = { inherit machineType; };
-          home-manager.backupFileExtension = "backup";
-        }
-      ];
-    };
   in {
     # System configuration
     darwinConfigurations = {
       "personal" = mkDarwinSystem {
         configName = "personal";
-        hostname = "MacBook-Pro";
+        machineType = "personal";
         username = "shiina";
       };
 
       "mbp-m1" = mkDarwinSystem {
         configName = "personal";
-        hostname = "mbp-m1";
+        machineType = "personal";
         username = "shina";
       };
     };

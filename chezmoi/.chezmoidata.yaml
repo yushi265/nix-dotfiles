@@ -6,11 +6,11 @@
 features:
   # AWS プロファイル (~/.aws/config) と coleta 用のエイリアス
   aws:
-    - MacBook-Pro
+    - mbp-m5
     - mbp-m1
 
 # rebuild() が使う nix-darwin の構成名 (nix/flake.nix の darwinConfigurations)。
 # 載っていないホストは hostname をそのまま構成名として使う。
 nixConfig:
-  MacBook-Pro: personal
+  mbp-m5: personal
   mbp-m1: mbp-m1

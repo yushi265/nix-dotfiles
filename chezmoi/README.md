@@ -10,7 +10,7 @@
 
 | hostname | ユーザー | ホーム | nix 構成名 | 有効な機能 |
 |---|---|---|---|---|
-| `MacBook-Pro` | `shiina` | `/Users/shiina` | `personal` | `aws` |
+| `mbp-m5` | `shiina` | `/Users/shiina` | `personal` | `aws` |
 | `mbp-m1` | `shina` | `/Users/shina` | `mbp-m1` | `aws` |
 
 hostname は `chezmoi data` の `hostname` の値。ここに載っていないホストでも
@@ -25,7 +25,7 @@ apply はできるが、機能フラグで囲んだ設定は何も入らない�
 ```yaml
 features:
   aws:
-    - MacBook-Pro
+    - mbp-m5
     - mbp-m1
 ```
 
@@ -117,7 +117,7 @@ features:
 
 **ホームの現状を丸ごと `chezmoi add` やコピーで取り込まない。**
 そのマシンのパスや専用の hook が混ざり、別マシンで事故になる
-(2026-10 に `mbp-m1` の設定が `MacBook-Pro` 側に混入して revert した)。
+(2026-10 に `mbp-m1` の設定が `MacBook-Pro` (現 `mbp-m5`) 側に混入して revert した)。
 取り込むときは `chezmoi diff` を見て、キー・行単位で入れる。
 
 ## 別マシンで pull したあとの確認
@@ -132,9 +132,7 @@ chezmoi diff
 
 ## 補足: nix 側の `machineType`
 
-`nix/flake.nix` はこの表とは別系統で、hostname から `machineType`
-(`MacBook-Pro` / `mbp-m1` → `personal`、それ以外 → `work`) を導出し、
-`nix/hosts/common.nix` のパッケージ分岐に使っている。
-`.chezmoi.toml.tmpl` にも同じ値が残っているが、chezmoi のテンプレートは
-もう `machineType` を参照していない。2 台とも `personal` になるので、
-2 台の違いを書く用途には使えない。
+`nix/flake.nix` はこの表とは別系統で、`darwinConfigurations` の構成ごとに
+`machineType` (`personal` / `work`) を直接書き、`nix/hosts/common.nix` の
+パッケージ分岐に使っている。hostname からは判定しない。chezmoi 側には
+`machineType` は無い。2 台とも `personal` なので、2 台の違いを書く用途には使えない。
