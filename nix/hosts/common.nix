@@ -51,7 +51,8 @@
     zsh-completions
   ] ++ (lib.optionals (machineType == "personal") [
     # AWS tools (personal machines only)
-    # awscli2 は home.nix の programs.awscli で管理
+    awscli2
+    terraform
     # aws-sam-cli  # FIXME: ビルドでテストが失敗するため一旦コメントアウト
     ssm-session-manager-plugin
   ]);
