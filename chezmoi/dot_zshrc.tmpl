@@ -252,9 +252,9 @@ rgf() {
     fi
 }
 
-# Nix darwin-rebuild switch
+# Nix darwin-rebuild switch (構成名は hostname と同じ。nix/flake.nix の darwinConfigurations)
 rebuild() {
-  sudo darwin-rebuild switch --flake ~/.dotfiles/nix#{{ get .nixConfig .chezmoi.hostname | default .chezmoi.hostname }} "$@"
+  sudo darwin-rebuild switch --flake ~/.dotfiles/nix#{{ .chezmoi.hostname }} "$@"
 }
 {{ if has .chezmoi.hostname .features.aws -}}
 # AWS / coleta (.chezmoidata.yaml の features.aws に載っているホストのみ)

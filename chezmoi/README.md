@@ -10,7 +10,7 @@
 
 | hostname | ユーザー | ホーム | nix 構成名 | 有効な機能 |
 |---|---|---|---|---|
-| `mbp-m5` | `shiina` | `/Users/shiina` | `personal` | `aws` |
+| `mbp-m5` | `shiina` | `/Users/shiina` | `mbp-m5` | `aws` |
 | `mbp-m1` | `shina` | `/Users/shina` | `mbp-m1` | `aws` |
 
 hostname は `chezmoi data` の `hostname` の値。ここに載っていないホストでも
@@ -43,9 +43,8 @@ features:
 |---|---|---|
 | `aws` | AWS プロファイル一式、coleta 用のエイリアス (`awsp` / `awsd` など) | `private_dot_aws/config.tmpl`、`dot_zshrc.tmpl` |
 
-`nixConfig` は `rebuild` 関数が使う nix-darwin の構成名
-(`nix/flake.nix` の `darwinConfigurations`) をホストごとに引く表。
-載っていないホストは hostname をそのまま構成名として使う。
+`rebuild` 関数は hostname をそのまま nix-darwin の構成名
+(`nix/flake.nix` の `darwinConfigurations`) として使う。
 
 ### 2. ホームのパスをベタ書きしない
 
@@ -105,8 +104,8 @@ features:
 
 **マシンを追加する**
 1. 新マシンで `chezmoi data` を実行して `hostname` を確認する
-2. `.chezmoidata.yaml` の `features` の必要な機能と、`nixConfig` に足す
-3. `nix/flake.nix` の `darwinConfigurations` に構成を足す
+2. `.chezmoidata.yaml` の `features` の必要な機能に足す
+3. `nix/flake.nix` の `darwinConfigurations` に hostname と同じ名前で構成を足す
 4. 上の「今あるホスト」の表を更新する
 
 **Claude の共有設定を変える**
@@ -129,10 +128,3 @@ chezmoi diff
 ```
 
 想定外の差分 (別ユーザーのパス、知らない hook など) が出たら apply せずに原因を調べる。
-
-## 補足: nix 側の `machineType`
-
-`nix/flake.nix` はこの表とは別系統で、`darwinConfigurations` の構成ごとに
-`machineType` (`personal` / `work`) を直接書き、`nix/hosts/common.nix` の
-パッケージ分岐に使っている。hostname からは判定しない。chezmoi 側には
-`machineType` は無い。2 台とも `personal` なので、2 台の違いを書く用途には使えない。

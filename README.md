@@ -13,7 +13,7 @@ nix-darwin + home-manager (システム管理) と chezmoi (dotfiles 管理) の
 │   └── home.nix                  # home-manager (最小構成)
 ├── chezmoi/                      # dotfiles (chezmoi 管理)
 │   ├── .chezmoi.toml.tmpl        # sourceDir
-│   ├── .chezmoidata.yaml         # ホスト別の機能フラグ / nix 構成名
+│   ├── .chezmoidata.yaml         # ホスト別の機能フラグ
 │   ├── .chezmoidata/skills.yaml  # npx skills で入れる外部スキルの宣言
 │   ├── .chezmoitemplates/        # 共有テンプレート (claude-settings.json)
 │   ├── .chezmoiignore            # 自動生成ファイルを追跡から除外
@@ -47,7 +47,7 @@ Zsh 設定は `chezmoi/dot_zshrc.tmpl` に集約している。nix はプラグ�
 
 マシンごとの違いは `chezmoi/.chezmoidata.yaml` に集約している (機能ごとに入れるホスト名を並べる)。
 `~/.claude/settings.json` は共有するキーだけを chezmoi が置き換える部分管理。詳細は `chezmoi/README.md` を参照。
-nix 側の `machineType` (`personal` / `work`) は `nix/flake.nix` の `darwinConfigurations` に構成ごとに書く (hostname からは判定しない)。
+nix 側は `nix/flake.nix` の `darwinConfigurations` に hostname と同じ名前で構成を書く (`mbp-m5` / `mbp-m1`)。2 台の違いはユーザー名だけ。
 
 ## 新マシンセットアップ
 
@@ -59,7 +59,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 git clone https://github.com/yushi265/nix-dotfiles.git ~/.dotfiles
 
 # 3. nix-darwin を適用
-nix run nix-darwin -- switch --flake ~/.dotfiles/nix#personal
+nix run nix-darwin -- switch --flake ~/.dotfiles/nix#<hostname>  # mbp-m5 / mbp-m1
 
 # 4. chezmoi で dotfiles を展開
 chezmoi init --source=~/.dotfiles/chezmoi
@@ -70,7 +70,7 @@ chezmoi apply
 
 ```bash
 # システム設定を変更・適用 (パッケージ追加、macOS defaults 等)
-rebuild                        # = sudo darwin-rebuild switch --flake ~/.dotfiles/nix#...
+rebuild                        # = sudo darwin-rebuild switch --flake ~/.dotfiles/nix#<hostname>
 
 # dotfiles を変更・適用 (zsh 設定もこちら。rebuild 不要)
 moi diff                       # = chezmoi diff
@@ -113,7 +113,7 @@ sudo darwin-rebuild --rollback
 git diff --check
 chezmoi --source "$PWD/chezmoi" cat "$HOME/.codex/AGENTS.md"
 python3 -B -m unittest discover -s tests -v
-darwin-rebuild build --flake "$PWD/nix#personal"
+darwin-rebuild build --flake "$PWD/nix#$(hostname -s)"
 ```
 
 移行テストは一時ディレクトリでスクリプトと削除指定を検証し、実ホームにはapplyしない。

@@ -17,13 +17,13 @@
 
   outputs = { self, nixpkgs, nix-darwin, home-manager, ... }: let
     # Helper function to create darwin system
-    # machineType ("personal" / "work") is declared per configuration below
-    mkDarwinSystem = { machineType, username, system ? "aarch64-darwin" }:
+    # 構成名は hostname と揃える (~/.zshrc の rebuild() が hostname で引く)
+    mkDarwinSystem = { username, system ? "aarch64-darwin" }:
       nix-darwin.lib.darwinSystem {
         inherit system;
 
         specialArgs = {
-          inherit machineType username;
+          inherit username;
         };
 
         modules = [
@@ -33,7 +33,6 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.${username} = import ./home.nix;
-            home-manager.extraSpecialArgs = { inherit machineType; };
             home-manager.backupFileExtension = "backup";
           }
         ];
@@ -41,13 +40,11 @@
   in {
     # System configuration
     darwinConfigurations = {
-      "personal" = mkDarwinSystem {
-        machineType = "personal";
+      "mbp-m5" = mkDarwinSystem {
         username = "shiina";
       };
 
       "mbp-m1" = mkDarwinSystem {
-        machineType = "personal";
         username = "shina";
       };
     };
