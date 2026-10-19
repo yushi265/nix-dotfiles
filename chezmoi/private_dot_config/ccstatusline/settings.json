@@ -8,6 +8,15 @@
         "color": "brightYellow"
       },
       {
+        "id": "a4a0daf1-43fc-42a3-80f9-4680605a842a",
+        "type": "separator"
+      },
+      {
+        "id": "622b6ab0-28d8-490c-ac51-1716fcddfbba",
+        "type": "thinking-effort",
+        "color": "brightRed"
+      },
+      {
         "id": "2",
         "type": "separator"
       },
@@ -73,8 +82,12 @@
   "flexMode": "full-minus-40",
   "compactThreshold": 60,
   "colorLevel": 2,
+  "defaultPaddingSide": "both",
   "inheritSeparatorColors": false,
   "globalBold": false,
+  "gitCacheTtlSeconds": 5,
+  "terminalWidthCacheTtlSeconds": 5,
+  "customCommandCacheTtlSeconds": 0,
   "minimalistMode": true,
   "powerline": {
     "enabled": false,
