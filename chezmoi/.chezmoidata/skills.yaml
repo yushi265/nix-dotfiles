@@ -51,6 +51,76 @@ skills:
         - obsidian-cli
         - obsidian-markdown
 
+    - source: nanaism/yomiyasu
+      skills:
+        - yomiyasu
+
+    # Claude Code は subagent (poteto-agent / comment-sicko) を同梱する
+    # pstack@cursor-plugins プラグインで入れるため claude-code を外す。
+    - source: cursor/plugins
+      agents:
+        - codex
+        - cursor
+      skills:
+        - architect
+        - arena
+        - automate-me
+        - benchmark-checklist
+        - blast-radius
+        - bro
+        - correct
+        - create-formal-verification-skill
+        - create-verification-skill
+        - figure-it-out
+        - how
+        - in-your-own-words
+        - interrogate
+        - ketchup
+        - ketchup-video
+        - maintain-formal-verification-skill
+        - maintain-verification-skill
+        - make-bot-ui
+        - no-comments
+        - poteto-help
+        - poteto-mode
+        - principle-attack-the-premise
+        - principle-boundary-discipline
+        - principle-build-the-lever
+        - principle-encode-lessons-in-structure
+        - principle-exhaust-the-design-space
+        - principle-experience-first
+        - principle-explain-the-number
+        - principle-fix-root-causes
+        - principle-foundational-thinking
+        - principle-guard-the-context-window
+        - principle-laziness-protocol
+        - principle-make-operations-idempotent
+        - principle-migrate-callers-then-delete-legacy-apis
+        - principle-minimize-reader-load
+        - principle-model-the-domain
+        - principle-never-block-on-the-human
+        - principle-outcome-oriented-execution
+        - principle-prove-it-works
+        - principle-redesign-from-first-principles
+        - principle-separate-before-serializing-shared-state
+        - principle-sequence-verifiable-units
+        - principle-subtract-before-you-add
+        - principle-test-behavior-not-implementation
+        - principle-type-system-discipline
+        - recall
+        - reflect
+        - setup-pstack
+        - sharpen
+        - show-me-your-work
+        - statechart
+        - swarm
+        - tdd
+        - teach
+        - technical-writing
+        - typescript-best-practices
+        - unslop
+        - why
+
     # Claude Code は cloudflare@cloudflare プラグイン (MCP 同梱) で入れるため
     # claude-code を外し、二重登録を避ける。Codex の MCP は
     # run_onchange_after_04-cloudflare-mcp.sh.tmpl で別途登録している。

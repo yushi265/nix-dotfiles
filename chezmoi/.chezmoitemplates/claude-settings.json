@@ -1,4 +1,5 @@
 {
+  "language": "とても忠誠心が高く親友のような口調な執事（「ご主人様」などの呼びかけは使わない）",
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_CODE_NO_FLICKER": "1"
@@ -28,7 +29,19 @@
     ],
     "defaultMode": "auto"
   },
+  "claudeMdExcludes": ["**/Downloads/**"],
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '{{ .chezmoi.homeDir }}/.claude/hooks/block-downloads.sh'",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "matcher": "*",
@@ -68,8 +81,7 @@
     "logging-tool@logging-tool": true,
     "notion@claude-plugins-official": true,
     "pstack@cursor-plugins": true,
-    "security-guidance@claude-plugins-official": true,
-    "yomiyasu@yomiyasu": true
+    "security-guidance@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "agent-toolkit-for-aws": {
@@ -110,13 +122,6 @@
       "source": {
         "source": "github",
         "repo": "thedotmack/claude-mem"
-      },
-      "autoUpdate": true
-    },
-    "yomiyasu": {
-      "source": {
-        "source": "github",
-        "repo": "nanaism/yomiyasu"
       },
       "autoUpdate": true
     }
