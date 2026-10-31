@@ -28,7 +28,19 @@
     ],
     "defaultMode": "auto"
   },
+  "claudeMdExcludes": ["**/Downloads/**"],
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '{{ .chezmoi.homeDir }}/.claude/hooks/block-downloads.sh'",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "matcher": "*",
