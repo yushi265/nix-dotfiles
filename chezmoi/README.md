@@ -73,8 +73,8 @@ features:
 
 | 区分 | キー |
 |---|---|
-| 共有する (chezmoi が置き換える) | `env`、`permissions`、`hooks`、`statusLine`、`enabledPlugins`、`extraKnownMarketplaces`、`pluginConfigs` |
-| マシン任せ (差分に出ない) | `language`、`model`、`modelSettings`、`effortLevel`、`autoMode`、`remoteControlAtStartup`、`agentPushNotifEnabled`、`skip*Prompt` など上に無いもの全部 |
+| 共有する (chezmoi が置き換える) | `language`、`env`、`permissions`、`hooks`、`statusLine`、`enabledPlugins`、`extraKnownMarketplaces`、`pluginConfigs` |
+| マシン任せ (差分に出ない) | `model`、`modelSettings`、`effortLevel`、`autoMode`、`remoteControlAtStartup`、`agentPushNotifEnabled`、`skip*Prompt` など上に無いもの全部 |
 
 注意:
 
