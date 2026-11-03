@@ -72,6 +72,10 @@ eval "$(zoxide init zsh)"
 # mise initialization (Homebrew 管理)。必ず PATH の設定より後に置くこと。
 [[ -x /opt/homebrew/bin/mise ]] && eval "$(/opt/homebrew/bin/mise activate zsh)"
 
+# direnv: ディレクトリの .envrc を自動で読み込む（例: orbit の API 認証情報をキーチェーンから読む）。
+# rebuild 前の端末でもエラーにしないため、存在するときだけ有効にする。
+command -v direnv >/dev/null && eval "$(direnv hook zsh)"
+
 # Load local env if exists
 [[ -f "$HOME/.local/bin/env" ]] && source "$HOME/.local/bin/env"
 

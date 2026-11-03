@@ -32,6 +32,7 @@
     bat
     fzf
     zoxide
+    direnv
     git
     git-open
     yazi
