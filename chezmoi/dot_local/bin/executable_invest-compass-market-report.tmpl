@@ -9,13 +9,17 @@ repo="{{ .chezmoi.homeDir }}/src/github.com/yushi265/invest-compass"
 cd "$repo"
 
 echo "=== $(date '+%Y-%m-%d %H:%M:%S %z') market-report start"
-# 調査・保存に要る操作だけを許可する。発注・push・保有DBの更新は許可しない。
+# 調査・保存に要る操作だけを許可する。dontAsk なので、ここにない操作は確認なしで拒否される
+# （settings.json の auto モードに任せない）。発注・push・保有DBの更新は許可しない。
+# ファイル作成は Edit(path) ルールで判定される（Write(path) は効かない）。
 "{{ .chezmoi.homeDir }}/.local/bin/claude" -p \
   "/market-report を実行して、レポートを reports/ に保存して。定期実行なので質問はせず、確認できない項目は未確認と書いて完了させて。" \
+  --permission-mode dontAsk \
   --allowedTools \
     "Bash(.venv/bin/python3 -m stock_investigator market-snapshot:*)" \
     "Bash(.venv/bin/python3 -m stock_investigator v2-status:*)" \
+    "Bash(date:*)" "Bash(ls:*)" "Bash(mkdir -p reports)" "Bash(git check-ignore:*)" \
     "WebSearch" "WebFetch" "Read" "Glob" "Grep" \
-    "Write(reports/**)" "Edit(reports/**)"
+    "Edit(reports/**)"
 echo "=== $(date '+%Y-%m-%d %H:%M:%S %z') market-report end"
 {{ end -}}
