@@ -1,0 +1,21 @@
+{{- if has .chezmoi.hostname .features.market_report -}}
+#!/bin/zsh -l
+# invest-compass の /market-report（日本株の相場整理）を Claude Code で無人実行する。
+# LaunchAgent（com.yushi265.invest-compass.market-report）から平日 8:00 に起動される。
+# レポートは invest-compass の reports/market-report-YYYY-MM-DD.md に保存される。
+set -euo pipefail
+
+repo="{{ .chezmoi.homeDir }}/src/github.com/yushi265/invest-compass"
+cd "$repo"
+
+echo "=== $(date '+%Y-%m-%d %H:%M:%S %z') market-report start"
+# 調査・保存に要る操作だけを許可する。発注・push・保有DBの更新は許可しない。
+"{{ .chezmoi.homeDir }}/.local/bin/claude" -p \
+  "/market-report を実行して、レポートを reports/ に保存して。定期実行なので質問はせず、確認できない項目は未確認と書いて完了させて。" \
+  --allowedTools \
+    "Bash(.venv/bin/python3 -m stock_investigator market-snapshot:*)" \
+    "Bash(.venv/bin/python3 -m stock_investigator v2-status:*)" \
+    "WebSearch" "WebFetch" "Read" "Glob" "Grep" \
+    "Write(reports/**)" "Edit(reports/**)"
+echo "=== $(date '+%Y-%m-%d %H:%M:%S %z') market-report end"
+{{ end -}}
