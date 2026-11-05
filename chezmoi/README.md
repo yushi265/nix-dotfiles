@@ -10,7 +10,7 @@
 
 | hostname | ユーザー | ホーム | nix 構成名 | 有効な機能 |
 |---|---|---|---|---|
-| `mbp-m5` | `shiina` | `/Users/shiina` | `mbp-m5` | `aws` |
+| `mbp-m5` | `shiina` | `/Users/shiina` | `mbp-m5` | `aws`、`market_report` |
 | `mbp-m1` | `shina` | `/Users/shina` | `mbp-m1` | `aws` |
 
 hostname は `chezmoi data` の `hostname` の値。ここに載っていないホストでも
@@ -42,6 +42,7 @@ features:
 | 機能 | 中身 | 使っているファイル |
 |---|---|---|
 | `aws` | AWS プロファイル一式、coleta 用のエイリアス (`awsp` / `awsd` など) | `private_dot_aws/config.tmpl`、`dot_zshrc.tmpl` |
+| `market_report` | invest-compass の `/market-report` を平日 8:10 に `claude -p` で実行する LaunchAgent。ログは `~/Library/Logs/invest-compass-market-report.log` | `private_Library/LaunchAgents/com.yushi265.invest-compass.market-report.plist.tmpl`、`dot_local/bin/executable_invest-compass-market-report.tmpl`、`run_onchange_after_06-market-report-agent.sh.tmpl` |
 
 `rebuild` 関数は hostname をそのまま nix-darwin の構成名
 (`nix/flake.nix` の `darwinConfigurations`) として使う。
