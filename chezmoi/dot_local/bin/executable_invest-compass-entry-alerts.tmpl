@@ -1,0 +1,56 @@
+{{- if has .chezmoi.hostname .features.entry_alerts -}}
+#!/bin/zsh -l
+# invest-compass の買い場チェック（entry-alerts）を実行する。
+# LaunchAgent（com.yushi265.invest-compass.entry-alerts）から平日 7:45 と 12:05 に起動される。
+# 10時より前は朝（前営業日の確定日足）、それ以降は昼（前場の5分足の速報）として実行する。
+# 条件が成立したら macOS に通知する（通知に銘柄は載せない）。
+# 保有の有無を除いた *.public.md だけを invest-compass の entry-alerts ブランチへ push し、
+# 「執事」プロジェクトの定期タスクがそれを読んでスレッドへ投稿する。
+# LLM は使わない（CLI を直接実行する）。発注・保有DBの方針や設定は変更しない。
+set -euo pipefail
+
+repo="{{ .chezmoi.homeDir }}/src/github.com/yushi265/invest-compass"
+cd "$repo"
+
+phase=morning
+if (( 10#$(date +%H) >= 10 )); then
+  phase=midday
+fi
+echo "=== $(date '+%Y-%m-%d %H:%M:%S %z') entry-alerts $phase start"
+rc=0
+.venv/bin/python3 -m stock_investigator entry-alerts --phase "$phase" --notify \
+  --database data/phase8-development.sqlite3 || rc=$?
+echo "=== $(date '+%Y-%m-%d %H:%M:%S %z') entry-alerts $phase end (rc=$rc)"
+# 終了コード1は一部の取得失敗。レポートはできているので投稿する。2は入力・設定エラー。
+if (( rc == 2 )); then
+  exit 2
+fi
+
+report="reports/entry-alerts/$(date +%F)-$phase.public.md"
+if [[ ! -f "$report" ]]; then
+  echo "publish: $report がないため push しない"
+  exit "$rc"
+fi
+# 作業ツリーと main には触れない（一時 index とプラミングコマンドでコミットを作る）。
+# fetch は一時 index を設定する前に行う（空の index ファイルがあると git が失敗する）。
+parent=()
+if git fetch -q origin entry-alerts 2>/dev/null; then
+  parent=(-p "$(git rev-parse FETCH_HEAD)")
+fi
+tmpdir="$(mktemp -d)"
+export GIT_INDEX_FILE="$tmpdir/index"
+if (( ${#parent} )); then
+  git read-tree "${parent[2]}"
+else
+  git read-tree --empty
+fi
+blob="$(git hash-object -w "$report")"
+git update-index --add --cacheinfo "100644,$blob,entry-alerts/${report:t}"
+tree="$(git write-tree)"
+commit="$(git commit-tree "$tree" "${parent[@]}" -m "entry-alerts: ${report:t}")"
+git push -q origin "$commit:refs/heads/entry-alerts"
+unset GIT_INDEX_FILE
+rm -rf "$tmpdir"
+echo "publish: ${report:t} を entry-alerts に push した ($commit)"
+exit "$rc"
+{{ end -}}

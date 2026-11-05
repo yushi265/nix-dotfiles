@@ -10,7 +10,7 @@
 
 | hostname | ユーザー | ホーム | nix 構成名 | 有効な機能 |
 |---|---|---|---|---|
-| `mbp-m5` | `shiina` | `/Users/shiina` | `mbp-m5` | `aws`、`market_report` |
+| `mbp-m5` | `shiina` | `/Users/shiina` | `mbp-m5` | `aws`、`market_report`、`entry_alerts` |
 | `mbp-m1` | `shina` | `/Users/shina` | `mbp-m1` | `aws` |
 
 hostname は `chezmoi data` の `hostname` の値。ここに載っていないホストでも
@@ -43,6 +43,7 @@ features:
 |---|---|---|
 | `aws` | AWS プロファイル一式、coleta 用のエイリアス (`awsp` / `awsd` など) | `private_dot_aws/config.tmpl`、`dot_zshrc.tmpl` |
 | `market_report` | invest-compass の `/market-report` を平日 8:10 に `claude -p` で実行する LaunchAgent。ログは `~/Library/Logs/invest-compass-market-report.log` | `private_Library/LaunchAgents/com.yushi265.invest-compass.market-report.plist.tmpl`、`dot_local/bin/executable_invest-compass-market-report.tmpl`、`run_onchange_after_06-market-report-agent.sh.tmpl` |
+| `entry_alerts` | invest-compass の `entry-alerts`（監視銘柄の買い場チェック）を平日 7:45 と 12:05 に実行する LaunchAgent。条件成立時は macOS 通知。保有の有無を除いた版を invest-compass の `entry-alerts` ブランチへ push する。ログは `~/Library/Logs/invest-compass-entry-alerts.log` | `private_Library/LaunchAgents/com.yushi265.invest-compass.entry-alerts.plist.tmpl`、`dot_local/bin/executable_invest-compass-entry-alerts.tmpl`、`run_onchange_after_07-entry-alerts-agent.sh.tmpl` |
 
 `rebuild` 関数は hostname をそのまま nix-darwin の構成名
 (`nix/flake.nix` の `darwinConfigurations`) として使う。
