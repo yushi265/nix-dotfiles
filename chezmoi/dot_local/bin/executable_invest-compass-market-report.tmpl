@@ -3,12 +3,16 @@
 # invest-compass の /market-report（日本株の相場整理）を Claude Code で無人実行する。
 # LaunchAgent（com.yushi265.invest-compass.market-report）から平日 8:10 に起動される。
 # レポートは invest-compass の reports/market-report-YYYY-MM-DD.md に保存される。
+# 作成後、レポートだけを invest-compass の market-reports ブランチへ push する。
+# 「執事」プロジェクトの定期タスクがそれを読み、スレッドへ投稿する。
+# レポートは公開情報の相場整理だけで、保有・予算・口座の情報は含まない。
 set -euo pipefail
 
 repo="{{ .chezmoi.homeDir }}/src/github.com/yushi265/invest-compass"
 cd "$repo"
 
 echo "=== $(date '+%Y-%m-%d %H:%M:%S %z') market-report start"
+stamp="$(mktemp)"
 # 調査・保存に要る操作だけを許可する。dontAsk なので、ここにない操作は確認なしで拒否される
 # （settings.json の auto モードに任せない）。発注・push・保有DBの更新は許可しない。
 # ファイル作成は Edit(path) ルールで判定される（Write(path) は効かない）。
@@ -22,4 +26,35 @@ echo "=== $(date '+%Y-%m-%d %H:%M:%S %z') market-report start"
     "WebSearch" "WebFetch" "Read" "Glob" "Grep" \
     "Edit(reports/**)"
 echo "=== $(date '+%Y-%m-%d %H:%M:%S %z') market-report end"
+
+# 今回作られたレポートを market-reports ブランチへ載せる。作業ツリーと main には触れない
+# （一時 index とプラミングコマンドでコミットを作る）。
+report="$(find reports -maxdepth 1 -name 'market-report-*.md' -newer "$stamp" -print | sort | tail -n 1)"
+rm -f "$stamp"
+if [[ -z "$report" ]]; then
+  echo "publish: 新しいレポートがないため push しない"
+  exit 0
+fi
+# fetch は一時 index を設定する前に行う（空の index ファイルがあると git が失敗する）。
+# ブランチがまだ無い初回だけ空から作る。fetch が別の理由で失敗しても push は fast-forward
+# でしか通らないので、既存の履歴は上書きされない。
+parent=()
+if git fetch -q origin market-reports 2>/dev/null; then
+  parent=(-p "$(git rev-parse FETCH_HEAD)")
+fi
+tmpdir="$(mktemp -d)"
+export GIT_INDEX_FILE="$tmpdir/index"
+if (( ${#parent} )); then
+  git read-tree "${parent[2]}"
+else
+  git read-tree --empty
+fi
+blob="$(git hash-object -w "$report")"
+git update-index --add --cacheinfo "100644,$blob,reports/${report:t}"
+tree="$(git write-tree)"
+commit="$(git commit-tree "$tree" "${parent[@]}" -m "market-report: ${report:t}")"
+git push -q origin "$commit:refs/heads/market-reports"
+unset GIT_INDEX_FILE
+rm -rf "$tmpdir"
+echo "publish: ${report:t} を market-reports に push した ($commit)"
 {{ end -}}
