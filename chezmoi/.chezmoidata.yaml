@@ -8,7 +8,7 @@ features:
   aws:
     - mbp-m5
     - mbp-m1
-  # invest-compass の /market-report を平日 8:00 に Claude Code で実行する LaunchAgent。
+  # invest-compass の /market-report を平日 8:10 に Claude Code で実行する LaunchAgent。
   # invest-compass を置いているホストだけに入れる（2台で同時に走らせない）
   market_report:
     - mbp-m5
