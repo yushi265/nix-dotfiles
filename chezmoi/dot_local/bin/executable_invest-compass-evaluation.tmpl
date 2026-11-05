@@ -1,0 +1,72 @@
+{{- if has .chezmoi.hostname .features.evaluation -}}
+#!/bin/zsh -l
+# invest-compass の定期実行の答え合わせ（評価ハーネス）を実行する。
+# LaunchAgent（com.yushi265.invest-compass.evaluation）から平日 20:00 に起動される。
+#   1. swing-shortlist-performance --all-due: 期日が来た swing-morning の順位を観察
+#   2. entry-alerts-performance: 期日が来た買い場チェックのシグナルを観察
+#   3. evaluation-scorecard: 保存済みの観察を集計（取得なし）
+# 使う日足は前営業日まで（Yahoo の当日終値が null の時間帯を避けるため夜に動かす）。
+# 撤退の目安割れ（保有に結び付く）を除いた *.public.md だけを invest-compass の
+# evaluation-scorecard ブランチへ push し、「執事」プロジェクトの定期タスクが週1でスレッドへ投稿する。
+# LLM は使わない。発注・保有DBの方針や設定は変更しない。
+set -uo pipefail
+
+repo="{{ .chezmoi.homeDir }}/src/github.com/yushi265/invest-compass"
+cd "$repo" || exit 2
+db=data/phase8-development.sqlite3
+cli=(.venv/bin/python3 -m stock_investigator)
+
+step() {
+  local name=$1; shift
+  echo "=== $(date '+%Y-%m-%d %H:%M:%S %z') $name start"
+  "$@"
+  local rc=$?
+  echo "=== $(date '+%Y-%m-%d %H:%M:%S %z') $name end (rc=$rc)"
+  return $rc
+}
+
+# 1・2 の終了コード1は一時的な取得失敗（残りは翌日に回る）。集計は保存済みの分で続ける。2は入力・設定エラー。
+worst=0
+rc=0
+step swing-shortlist-performance "${cli[@]}" swing-shortlist-performance --all-due --timeout 3000 --database "$db" || rc=$?
+if (( rc > worst )); then worst=$rc; fi
+rc=0
+step entry-alerts-performance "${cli[@]}" entry-alerts-performance --timeout 1200 --database "$db" || rc=$?
+if (( rc > worst )); then worst=$rc; fi
+rc=0
+step evaluation-scorecard "${cli[@]}" evaluation-scorecard --database "$db" || rc=$?
+if (( rc != 0 )); then
+  exit 2
+fi
+
+set -e
+report="reports/evaluation-scorecard/$(date +%F).public.md"
+if [[ ! -f "$report" ]]; then
+  echo "publish: $report がないため push しない"
+  exit "$worst"
+fi
+# 作業ツリーと main には触れない（一時 index とプラミングコマンドでコミットを作る）。
+# fetch は一時 index を設定する前に行う（空の index ファイルがあると git が失敗する）。
+parent=()
+if git fetch -q origin evaluation-scorecard 2>/dev/null; then
+  parent=(-p "$(git rev-parse FETCH_HEAD)")
+fi
+tmpdir="$(mktemp -d)"
+# 途中で失敗しても一時 index を残さない。
+trap 'rm -rf "$tmpdir"' EXIT
+export GIT_INDEX_FILE="$tmpdir/index"
+if (( ${#parent} )); then
+  git read-tree "${parent[2]}"
+else
+  git read-tree --empty
+fi
+blob="$(git hash-object -w "$report")"
+git update-index --add --cacheinfo "100644,$blob,evaluation-scorecard/${report:t}"
+tree="$(git write-tree)"
+commit="$(git commit-tree "$tree" "${parent[@]}" -m "evaluation-scorecard: ${report:t}")"
+git push -q origin "${commit}:refs/heads/evaluation-scorecard"
+unset GIT_INDEX_FILE
+rm -rf "$tmpdir"
+echo "publish: ${report:t} を evaluation-scorecard に push した (${commit})"
+exit "$worst"
+{{ end -}}
