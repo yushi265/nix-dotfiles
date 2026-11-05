@@ -12,3 +12,7 @@ features:
   # invest-compass を置いているホストだけに入れる（2台で同時に走らせない）
   market_report:
     - mbp-m5
+  # invest-compass の買い場チェック（entry-alerts）を平日 7:45（寄り前）と 12:05（前場引け後）に
+  # 実行する LaunchAgent。invest-compass と保有DBを置いているホストだけに入れる
+  entry_alerts:
+    - mbp-m5
