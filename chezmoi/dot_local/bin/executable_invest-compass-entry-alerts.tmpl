@@ -38,6 +38,8 @@ if git fetch -q origin entry-alerts 2>/dev/null; then
   parent=(-p "$(git rev-parse FETCH_HEAD)")
 fi
 tmpdir="$(mktemp -d)"
+# 途中で失敗しても一時 index を残さない。
+trap 'rm -rf "$tmpdir"' EXIT
 export GIT_INDEX_FILE="$tmpdir/index"
 if (( ${#parent} )); then
   git read-tree "${parent[2]}"
@@ -48,7 +50,7 @@ blob="$(git hash-object -w "$report")"
 git update-index --add --cacheinfo "100644,$blob,entry-alerts/${report:t}"
 tree="$(git write-tree)"
 commit="$(git commit-tree "$tree" "${parent[@]}" -m "entry-alerts: ${report:t}")"
-git push -q origin "$commit:refs/heads/entry-alerts"
+git push -q origin "${commit}:refs/heads/entry-alerts"
 unset GIT_INDEX_FILE
 rm -rf "$tmpdir"
 echo "publish: ${report:t} を entry-alerts に push した ($commit)"
