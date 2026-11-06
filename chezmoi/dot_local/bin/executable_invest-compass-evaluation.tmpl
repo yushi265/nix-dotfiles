@@ -7,7 +7,7 @@
 #   3. evaluation-scorecard: 保存済みの観察を集計（取得なし）
 # 使う日足は前営業日まで（Yahoo の当日終値が null の時間帯を避けるため夜に動かす）。
 # 撤退の目安割れ（保有に結び付く）を除いた *.public.md だけを invest-compass の
-# evaluation-scorecard ブランチへ push し、「執事」プロジェクトの定期タスクが週1でスレッドへ投稿する。
+# main へ直接 push し、「執事」プロジェクトの定期タスクが週1でスレッドへ投稿する。
 # LLM は使わない。発注・保有DBの方針や設定は変更しない。
 set -uo pipefail
 
@@ -45,28 +45,33 @@ if [[ ! -f "$report" ]]; then
   echo "publish: $report がないため push しない"
   exit "$worst"
 fi
-# 作業ツリーと main には触れない（一時 index とプラミングコマンドでコミットを作る）。
-# fetch は一時 index を設定する前に行う（空の index ファイルがあると git が失敗する）。
-parent=()
-if git fetch -q origin evaluation-scorecard 2>/dev/null; then
-  parent=(-p "$(git rev-parse FETCH_HEAD)")
-fi
+dest="$report"
+blob="$(git hash-object -w "$report")"
+# ローカルの作業ツリーと main には触れない（checkout や pull をすると作業中の変更とぶつかるので、
+# 一時 index とプラミングコマンドで origin/main の上にコミットを作る）。
 tmpdir="$(mktemp -d)"
 # 途中で失敗しても一時 index を残さない。
 trap 'rm -rf "$tmpdir"' EXIT
-export GIT_INDEX_FILE="$tmpdir/index"
-if (( ${#parent} )); then
-  git read-tree "${parent[2]}"
-else
-  git read-tree --empty
-fi
-blob="$(git hash-object -w "$report")"
-git update-index --add --cacheinfo "100644,$blob,evaluation-scorecard/${report:t}"
-tree="$(git write-tree)"
-commit="$(git commit-tree "$tree" "${parent[@]}" -m "evaluation-scorecard: ${report:t}")"
-git push -q origin "${commit}:refs/heads/evaluation-scorecard"
-unset GIT_INDEX_FILE
-rm -rf "$tmpdir"
-echo "publish: ${report:t} を evaluation-scorecard に push した (${commit})"
-exit "$worst"
+# fetch から push までの間に main が進むと fast-forward にならず弾かれる。
+# 強制 push で他のコミットを消さないよう、取り直して作り直す。
+for attempt in 1 2 3; do
+  git fetch -q origin main
+  parent="$(git rev-parse FETCH_HEAD)"
+  rm -f "$tmpdir/index"
+  GIT_INDEX_FILE="$tmpdir/index" git read-tree "$parent"
+  GIT_INDEX_FILE="$tmpdir/index" git update-index --add --cacheinfo "100644,$blob,$dest"
+  tree="$(GIT_INDEX_FILE="$tmpdir/index" git write-tree)"
+  if [[ "$tree" == "$(git rev-parse "${parent}^{tree}")" ]]; then
+    echo "publish: ${dest} は main に同じ内容があるため push しない"
+    exit "$worst"
+  fi
+  commit="$(git commit-tree "$tree" -p "$parent" -m "evaluation-scorecard: ${report:t}")"
+  if git push -q origin "${commit}:refs/heads/main"; then
+    echo "publish: ${dest} を main に push した ($commit)"
+    exit "$worst"
+  fi
+  echo "publish: main が先に進んでいたため作り直す (${attempt}回目)"
+done
+echo "publish: main への push に3回失敗した" >&2
+exit 1
 {{ end -}}
