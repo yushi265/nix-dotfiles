@@ -16,3 +16,7 @@ features:
   # 実行する LaunchAgent。invest-compass と保有DBを置いているホストだけに入れる
   entry_alerts:
     - mbp-m5
+  # invest-compass の定期実行の答え合わせ（swing-shortlist-performance --all-due、entry-alerts-performance、
+  # evaluation-scorecard）を平日 20:00 に実行する LaunchAgent。保有DBを置いているホストだけに入れる
+  evaluation:
+    - mbp-m5

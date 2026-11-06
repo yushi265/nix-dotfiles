@@ -1,0 +1,77 @@
+{{- if has .chezmoi.hostname .features.evaluation -}}
+#!/bin/zsh -l
+# invest-compass の定期実行の答え合わせ（評価ハーネス）を実行する。
+# LaunchAgent（com.yushi265.invest-compass.evaluation）から平日 20:00 に起動される。
+#   1. swing-shortlist-performance --all-due: 期日が来た swing-morning の順位を観察
+#   2. entry-alerts-performance: 期日が来た買い場チェックのシグナルを観察
+#   3. evaluation-scorecard: 保存済みの観察を集計（取得なし）
+# 使う日足は前営業日まで（Yahoo の当日終値が null の時間帯を避けるため夜に動かす）。
+# 撤退の目安割れ（保有に結び付く）を除いた *.public.md だけを invest-compass の
+# main へ直接 push し、「執事」プロジェクトの定期タスクが週1でスレッドへ投稿する。
+# LLM は使わない。発注・保有DBの方針や設定は変更しない。
+set -uo pipefail
+
+repo="{{ .chezmoi.homeDir }}/src/github.com/yushi265/invest-compass"
+cd "$repo" || exit 2
+db=data/phase8-development.sqlite3
+cli=(.venv/bin/python3 -m stock_investigator)
+
+step() {
+  local name=$1; shift
+  echo "=== $(date '+%Y-%m-%d %H:%M:%S %z') $name start"
+  "$@"
+  local rc=$?
+  echo "=== $(date '+%Y-%m-%d %H:%M:%S %z') $name end (rc=$rc)"
+  return $rc
+}
+
+# 1・2 の終了コード1は一時的な取得失敗（残りは翌日に回る）。集計は保存済みの分で続ける。2は入力・設定エラー。
+worst=0
+rc=0
+step swing-shortlist-performance "${cli[@]}" swing-shortlist-performance --all-due --timeout 3000 --database "$db" || rc=$?
+if (( rc > worst )); then worst=$rc; fi
+rc=0
+step entry-alerts-performance "${cli[@]}" entry-alerts-performance --timeout 1200 --database "$db" || rc=$?
+if (( rc > worst )); then worst=$rc; fi
+rc=0
+step evaluation-scorecard "${cli[@]}" evaluation-scorecard --database "$db" || rc=$?
+if (( rc != 0 )); then
+  exit 2
+fi
+
+set -e
+report="reports/evaluation-scorecard/$(date +%F).public.md"
+if [[ ! -f "$report" ]]; then
+  echo "publish: $report がないため push しない"
+  exit "$worst"
+fi
+dest="$report"
+blob="$(git hash-object -w "$report")"
+# ローカルの作業ツリーと main には触れない（checkout や pull をすると作業中の変更とぶつかるので、
+# 一時 index とプラミングコマンドで origin/main の上にコミットを作る）。
+tmpdir="$(mktemp -d)"
+# 途中で失敗しても一時 index を残さない。
+trap 'rm -rf "$tmpdir"' EXIT
+# fetch から push までの間に main が進むと fast-forward にならず弾かれる。
+# 強制 push で他のコミットを消さないよう、取り直して作り直す。
+for attempt in 1 2 3; do
+  git fetch -q origin main
+  parent="$(git rev-parse FETCH_HEAD)"
+  rm -f "$tmpdir/index"
+  GIT_INDEX_FILE="$tmpdir/index" git read-tree "$parent"
+  GIT_INDEX_FILE="$tmpdir/index" git update-index --add --cacheinfo "100644,$blob,$dest"
+  tree="$(GIT_INDEX_FILE="$tmpdir/index" git write-tree)"
+  if [[ "$tree" == "$(git rev-parse "${parent}^{tree}")" ]]; then
+    echo "publish: ${dest} は main に同じ内容があるため push しない"
+    exit "$worst"
+  fi
+  commit="$(git commit-tree "$tree" -p "$parent" -m "evaluation-scorecard: ${report:t}")"
+  if git push -q origin "${commit}:refs/heads/main"; then
+    echo "publish: ${dest} を main に push した ($commit)"
+    exit "$worst"
+  fi
+  echo "publish: main が先に進んでいたため作り直す (${attempt}回目)"
+done
+echo "publish: main への push に3回失敗した" >&2
+exit 1
+{{ end -}}
